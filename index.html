@@ -26,210 +26,84 @@
     </header>
 
     <main class="max-w-4xl mx-auto p-10 grid grid-cols-1 md:grid-cols-3 gap-10">
-        
         <div class="md:col-span-2">
             <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">Populares</h2>
-            <div id="contenedor-canciones" class="flex flex-col gap-4 mb-16">
-                <p class="text-zinc-500 text-sm">Cargando música...</p>
-            </div>
-
+            <div id="contenedor-canciones" class="flex flex-col gap-4 mb-16"></div>
             <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">Noticias Oficiales</h2>
-            <div id="contenedor-noticias" class="flex flex-col gap-4 mb-16">
-                <p class="text-zinc-500 text-sm">Cargando noticias...</p>
-            </div>
+            <div id="contenedor-noticias" class="flex flex-col gap-4 mb-16"></div>
         </div>
 
         <div class="md:col-span-1">
             <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">Próximos Shows</h2>
-            <div id="contenedor-eventos" class="flex flex-col gap-4 mb-16">
-                <p class="text-zinc-500 text-sm">Cargando fechas...</p>
-            </div>
-
-            <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">En Vivo</h2>
-            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
-                <div class="p-8 text-center flex flex-col items-center">
-                    <svg class="w-12 h-12 text-white mb-3" fill="currentColor" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14Z"/></svg>
-                    <p class="text-lg font-bold text-white">TikTok Live</p>
-                    <p class="text-sm text-zinc-400 mt-2 mb-6">Acompaña a Yuvng Miuze en sus transmisiones en directo.</p>
-                    <a href="https://www.tiktok.com/@yuvngmiuze/live" target="_blank" class="bg-[#FE2C55] hover:bg-[#E62A4D] text-white font-bold py-3 px-6 rounded transition-colors w-full">
-                        Ir a la Transmisión
-                    </a>
-                </div>
-            </div>
+            <div id="contenedor-eventos" class="flex flex-col gap-4 mb-16"></div>
         </div>
     </main>
 
     <script>
-        // 1. CONEXIÓN A SUPABASE
         const supabaseUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
         const supabaseKey = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Mantenemos el enlace viejo de Render SOLO para el Perfil y Eventos (por ahora)
-        const SERVIDOR_URL = 'https://foro-artistas.onrender.com';
-
-        // 2. DESCARGAR CANCIONES DESDE SUPABASE
-        async function cargarCanciones() {
-            const { data: canciones, error } = await supabase.from('canciones').select('*');
-            const contenedor = document.getElementById('contenedor-canciones');
-            contenedor.innerHTML = ''; 
-            if (canciones && canciones.length > 0) {
-                canciones.reverse().forEach(cancion => {
-                    const div = document.createElement('div');
-                    div.innerHTML = cancion.enlace_embed;
-                    contenedor.appendChild(div);
-                });
-            } else {
-                contenedor.innerHTML = '<p class="text-zinc-500 text-sm">No hay música disponible aún.</p>';
+        async function cargarTodo() {
+            // Perfil
+            const { data: perfil } = await supabase.from('perfil_artista').select('*');
+            if (perfil && perfil[0]) {
+                document.getElementById('nombre-artista').innerText = perfil[0].nombre;
+                document.getElementById('bio-artista').innerText = perfil[0].biografia;
+                if(perfil[0].foto_perfil_url) {
+                    const img = document.getElementById('foto-perfil');
+                    img.src = perfil[0].foto_perfil_url;
+                    img.classList.remove('hidden');
+                    document.getElementById('placeholder-foto').classList.add('hidden');
+                }
             }
+
+            // Canciones
+            const { data: canciones } = await supabase.from('canciones').select('*');
+            const contCanciones = document.getElementById('contenedor-canciones');
+            contCanciones.innerHTML = (canciones || []).map(c => `<div>${c.enlace_embed}</div>`).join('');
+
+            // Eventos
+            const { data: eventos } = await supabase.from('eventos').select('*');
+            document.getElementById('contenedor-eventos').innerHTML = (eventos || []).map(e => `
+                <div class="bg-zinc-800 p-4 rounded-lg">
+                    <p class="font-bold text-green-400">${e.fecha}</p>
+                    <p class="text-sm">${e.lugar} - ${e.ciudad}</p>
+                </div>
+            `).join('');
+
+            // Noticias
+            cargarNoticias();
         }
 
-        // 3. EL NUEVO SISTEMA DE NOTICIAS Y COMENTARIOS
         async function cargarNoticias() {
-            // Traemos los posts
-            const { data: posts, error: errorPosts } = await supabase
-                .from('posts')
-                .select('*')
-                .order('fecha', { ascending: false });
-
-            // Traemos los comentarios de todo el mundo
-            const { data: comentarios, error: errorComs } = await supabase
-                .from('comentariospost')
-                .select('*')
-                .order('fecha', { ascending: true });
-
-            const contenedor = document.getElementById('contenedor-noticias');
-            contenedor.innerHTML = '';
-
-            if (!posts || posts.length === 0) {
-                contenedor.innerHTML = '<p class="text-zinc-500 text-sm">No hay noticias publicadas.</p>';
-                return;
-            }
-
-            // Construimos la tarjeta visual por cada Post
-            posts.forEach(post => {
-                const postDiv = document.createElement('div');
-                postDiv.className = 'bg-zinc-900 p-6 rounded-lg mb-8 border border-zinc-800 shadow-xl';
-                const postDate = new Date(post.fecha).toLocaleDateString();
-
-                // Filtramos los comentarios que pertenecen solo a este post
-                const comentariosDelPost = comentarios.filter(c => c.post_id === post.id);
-                let comentariosHTML = '';
-                comentariosDelPost.forEach(c => {
-                    const cDate = new Date(c.fecha).toLocaleDateString();
-                    comentariosHTML += `
-                        <div class="bg-zinc-800 p-3 rounded mt-2 border-l-2 border-green-500">
-                            <div class="flex justify-between items-start mb-1">
-                                <span class="font-bold text-green-400 text-xs">${c.autor}</span>
-                                <span class="text-xs text-zinc-500">${cDate}</span>
-                            </div>
-                            <p class="text-zinc-300 text-sm">${c.mensaje}</p>
-                        </div>
-                    `;
-                });
-
-                // Diseño final del post
-                postDiv.innerHTML = `
-                    <h3 class="text-xl font-black text-white mb-2">${post.titulo}</h3>
-                    <p class="text-xs text-zinc-500 mb-4 font-bold text-red-500">${postDate}</p>
-                    <p class="text-zinc-300 text-sm mb-6 leading-relaxed">${post.contenido}</p>
-                    
-                    <h4 class="text-sm font-bold text-zinc-400 border-t border-zinc-800 pt-4 mb-3">Comentarios de Fans</h4>
-                    <div class="mb-4 space-y-2">
-                        ${comentariosHTML || '<p class="text-xs text-zinc-600 italic">Sé el primero en comentar esta noticia.</p>'}
+            const { data: posts } = await supabase.from('posts').select('*').order('fecha', { ascending: false });
+            const { data: coms } = await supabase.from('comentariospost').select('*');
+            const contNoticias = document.getElementById('contenedor-noticias');
+            contNoticias.innerHTML = (posts || []).map(p => `
+                <div class="bg-zinc-900 p-6 rounded-lg mb-8 border border-zinc-800">
+                    <h3 class="text-xl font-bold">${p.titulo}</h3>
+                    <p class="text-sm text-zinc-400 mb-4">${p.contenido}</p>
+                    <div class="space-y-2">
+                        ${(coms || []).filter(c => c.post_id === p.id).map(c => `<p class="text-xs bg-zinc-800 p-2 rounded"><b>${c.autor}:</b> ${c.mensaje}</p>`).join('')}
                     </div>
-
-                    <div class="flex flex-col gap-2 mt-4 bg-black p-4 rounded border border-zinc-800">
-                        <input type="text" id="autor-${post.id}" placeholder="Tu Nombre o Apodo" class="bg-zinc-900 text-white p-2 rounded outline-none focus:border-green-500 text-sm border border-zinc-700">
-                        <textarea id="mensaje-${post.id}" placeholder="Escribe tu comentario aquí..." rows="2" class="bg-zinc-900 text-white p-2 rounded outline-none focus:border-green-500 resize-none text-sm border border-zinc-700"></textarea>
-                        <button onclick="enviarComentarioSupabase(${post.id})" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded transition-colors text-sm">Comentar</button>
+                    <div class="flex flex-col gap-2 mt-4">
+                        <input id="a-${p.id}" placeholder="Nombre" class="bg-black p-2 text-sm border border-zinc-700">
+                        <textarea id="m-${p.id}" placeholder="Comenta..." class="bg-black p-2 text-sm border border-zinc-700"></textarea>
+                        <button onclick="comentar(${p.id})" class="bg-green-600 text-sm font-bold p-2">Enviar</button>
                     </div>
-                `;
-                contenedor.appendChild(postDiv);
-            });
+                </div>
+            `).join('');
         }
 
-        // 4. FUNCIÓN PARA ENVIAR COMENTARIO Y GUARDARLO PARA SIEMPRE
-        async function enviarComentarioSupabase(postId) {
-            const autor = document.getElementById(`autor-${postId}`).value;
-            const mensaje = document.getElementById(`mensaje-${postId}`).value;
-
-            if (!autor || !mensaje) {
-                alert("Debes escribir tu nombre y un mensaje.");
-                return;
-            }
-
-            // Inyectamos el comentario en la base de datos
-            const { error } = await supabase
-                .from('comentariospost')
-                .insert([{ post_id: postId, autor: autor, mensaje: mensaje }]);
-
-            if (error) {
-                alert("Hubo un error al enviar el comentario.");
-                console.error(error);
-            } else {
-                cargarNoticias(); // Recargamos para que aparezca al instante
-            }
+        async function comentar(pid) {
+            const autor = document.getElementById('a-'+pid).value;
+            const mensaje = document.getElementById('m-'+pid).value;
+            await supabase.from('comentariospost').insert([{ post_id: pid, autor: autor, mensaje: mensaje }]);
+            cargarNoticias();
         }
 
-        // (Mantengo tus funciones viejas de perfil y eventos para no romperlas por ahora)
-        async function cargarPerfil() {
-            try {
-                const res = await fetch(`${SERVIDOR_URL}/perfil`);
-                const json = await res.json();
-                if (json.datos && json.datos.length > 0) {
-                    const perfil = json.datos[0];
-                    if (perfil.nombre) document.getElementById('nombre-artista').innerText = perfil.nombre;
-                    if (perfil.biografia) document.getElementById('bio-artista').innerText = perfil.biografia;
-                    if (perfil.foto_perfil_url) {
-                        const img = document.getElementById('foto-perfil');
-                        img.src = perfil.foto_perfil_url;
-                        img.classList.remove('hidden');
-                        document.getElementById('placeholder-foto').classList.add('hidden');
-                    }
-                }
-            } catch (e) {}
-        }
-        
-        async function cargarEventos() {
-            try {
-                const res = await fetch(`${SERVIDOR_URL}/eventos`);
-                const datos = await res.json();
-                const contenedor = document.getElementById('contenedor-eventos');
-                contenedor.innerHTML = ''; 
-                if(datos.eventos.length === 0) {
-                    contenedor.innerHTML = '<p class="text-zinc-500 text-sm">No hay fechas confirmadas por ahora.</p>';
-                    return;
-                }
-                datos.eventos.forEach(evento => {
-                    const div = document.createElement('div');
-                    div.className = "bg-zinc-800 p-4 rounded-lg flex flex-col gap-2";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center border-b border-zinc-700 pb-2">
-                            <span class="font-bold text-green-400 text-sm">${evento.fecha}</span>
-                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-400">${evento.ciudad}</span>
-                        </div>
-                        <p class="text-zinc-200 text-sm font-semibold">${evento.lugar}</p>
-                        ${evento.link_tickets ? `<a href="${evento.link_tickets}" target="_blank" class="mt-2 text-center bg-white text-black text-xs font-bold py-2 rounded-full hover:scale-105 transition-transform">Tickets</a>` : ''}
-                    `;
-                    contenedor.appendChild(div);
-                });
-            } catch (e) {}
-        }
-
-        // Arrancamos todo al cargar la página
-        cargarPerfil();
-        cargarCanciones();
-        cargarNoticias();
-        cargarEventos();
+        cargarTodo();
     </script>
-
-    <footer class="mt-12 text-center pb-8">
-        <hr class="border-zinc-800 mb-4">
-        <p class="text-zinc-500 text-sm">© 2026 Yuvng Miuze. Todos los derechos reservados.</p>
-        <a href="login.html" class="text-zinc-700 text-xs mt-2 inline-block hover:text-zinc-400 transition-colors">
-            🔒 Acceso Artista
-        </a>
-    </footer>
 </body>
 </html>

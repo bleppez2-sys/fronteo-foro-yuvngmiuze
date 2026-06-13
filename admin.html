@@ -60,6 +60,14 @@
                         Publicar Adelanto
                     </button>
                 </form>
+
+                <!-- NUEVO: ZONA DE BORRADO -->
+                <div class="mt-6 pt-6 border-t border-zinc-800">
+                    <h3 class="text-sm font-bold text-zinc-400 mb-4">Adelantos Publicados:</h3>
+                    <div id="listaPreviewsAdmin" class="space-y-2">
+                        <p class="text-zinc-600 text-xs italic">Cargando lista...</p>
+                    </div>
+                </div>
             </section>
 
             <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-2xl">
@@ -111,6 +119,7 @@
         (function() {
             const laUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
             const laLlave = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
+            
             window.miSupabase = window.miSupabase || window.supabase.createClient(laUrl, laLlave);
             const clienteDB = window.miSupabase;
             let idPerfilGlobal = null;
@@ -126,6 +135,27 @@
                 window.location.href = 'login.html';
             });
 
+            // NUEVO: CARGAR LISTA PARA BORRAR
+            async function cargarListaPreviews() {
+                const { data: ps } = await clienteDB.from('previews').select('*').order('fecha', { ascending: false });
+                const cont = document.getElementById('listaPreviewsAdmin');
+                if(!ps || ps.length === 0) return cont.innerHTML = '<p class="text-zinc-600 text-xs">No hay adelantos.</p>';
+                
+                cont.innerHTML = ps.map(p => `
+                    <div class="flex justify-between items-center bg-zinc-800 p-2 rounded">
+                        <span class="truncate w-3/4 text-xs text-white">${p.titulo}</span>
+                        <button onclick="window.borrarPreview(${p.id})" class="text-red-500 font-bold text-[10px] hover:underline">BORRAR</button>
+                    </div>
+                `).join('');
+            }
+
+            window.borrarPreview = async function(id) {
+                if(!confirm("¿Seguro que quieres borrar este adelanto?")) return;
+                await clienteDB.from('previews').delete().eq('id', id);
+                cargarListaPreviews();
+                alert("Adelanto borrado.");
+            };
+
             // LOGICA DEL INTERRUPTOR LIVE
             async function cargarEstadoLive() {
                 const { data: perfil } = await clienteDB.from('perfil_artista').select('*');
@@ -133,6 +163,7 @@
                     idPerfilGlobal = perfil[0].id;
                     actualizarUIBotonLive(perfil[0].en_vivo);
                 }
+                cargarListaPreviews(); // Llamamos a cargar la lista aquí
             }
 
             function actualizarUIBotonLive(enVivo) {
@@ -161,10 +192,7 @@
                 if (!idPerfilGlobal) return alert("Error: Perfil no cargado aún.");
                 const texto = document.getElementById('textoEstadoLive').textContent;
                 const nuevoEstado = texto === 'OFFLINE' ? true : false;
-                
-                // Actualizamos visualmente al instante
                 actualizarUIBotonLive(nuevoEstado);
-                // Guardamos en la base de datos
                 await clienteDB.from('perfil_artista').update({ en_vivo: nuevoEstado }).eq('id', idPerfilGlobal);
             });
 
@@ -288,6 +316,7 @@
                     alert('¡Adelanto publicado!');
                     document.getElementById('formPreview').reset();
                     window.cambiarModoPreview(); 
+                    cargarListaPreviews(); // Recargamos lista al subir
                 } catch (error) {
                     alert("ALERTA: " + error.message);
                 } finally {
@@ -297,7 +326,7 @@
             });
 
             cargarListaCanciones();
-            cargarEstadoLive(); // Arrancamos el botón
+            cargarEstadoLive(); 
         })();
     </script>
 </body>

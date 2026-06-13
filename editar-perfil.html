@@ -70,7 +70,8 @@
                     </div>
                 </div>
 
-                <div id="msg-box" class="hidden text-xs px-3 py-2 rounded-lg"></div>
+                <!-- Elemento msg-box posicionado correctamente -->
+                <div id="msg-box" class="hidden text-xs px-3 py-2 rounded-lg mb-4"></div>
 
                 <button id="btn-guardar" onclick="guardarTodo()" class="btn-primary w-full mt-2">Guardar cambios del perfil</button>
             </div>
@@ -184,6 +185,7 @@
         }
 
         function mostrarMensaje(texto, exito) {
+            const msgBox = document.getElementById('msg-box');
             msgBox.textContent = texto;
             msgBox.className = `text-xs px-3 py-2 rounded-lg ${exito ? 'bg-green-900/30 text-green-400 border border-green-800' : 'bg-red-900/30 text-red-400 border border-red-800'}`;
             msgBox.classList.remove('hidden');

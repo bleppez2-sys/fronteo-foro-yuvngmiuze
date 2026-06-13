@@ -29,17 +29,14 @@
             transition: background 0.2s, transform 0.1s; border: none; cursor: pointer;
         }
         .btn-primary:hover { background: #b91c1c; }
-        .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { background: #3f3f46; cursor: not-allowed; }
 
-        /* Animación entrada */
         .slide-up { animation: slideUp 0.4s ease forwards; }
         @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
 
         .step { display: none; }
         .step.activo { display: block; }
 
-        /* Indicador de pasos */
         .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #27272a; transition: all 0.3s; }
         .step-dot.activo { background: #dc2626; width: 24px; border-radius: 4px; }
         .step-dot.hecho { background: #16a34a; }
@@ -48,7 +45,6 @@
 <body class="bg-[#0e0e0e] text-white min-h-screen flex flex-col items-center justify-center p-4">
 
     <div class="w-full max-w-md">
-        <!-- Logo -->
         <div class="text-center mb-8">
             <a href="index.html" class="inline-block">
                 <h1 class="text-2xl font-black tracking-tight">ARTS<span class="text-red-600">FORO</span></h1>
@@ -56,7 +52,6 @@
             <p class="text-zinc-500 text-sm mt-1">La comunidad de música independiente</p>
         </div>
 
-        <!-- Indicador de pasos -->
         <div class="flex items-center justify-center gap-2 mb-8">
             <div class="step-dot activo" id="dot-1"></div>
             <div class="step-dot" id="dot-2"></div>
@@ -65,7 +60,7 @@
 
         <div class="bg-[#141414] border border-zinc-800 rounded-2xl p-6">
 
-            <!-- PASO 1: Tipo de cuenta -->
+            <!-- PASO 1 -->
             <div class="step activo slide-up" id="step-1">
                 <h2 class="text-xl font-black mb-1">¿Quién eres?</h2>
                 <p class="text-zinc-500 text-sm mb-6">Elige el tipo de cuenta que mejor te describe.</p>
@@ -75,21 +70,28 @@
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎧</div>
                         <div>
                             <p class="font-bold text-sm">Fan</p>
-                            <p class="text-zinc-500 text-xs">Sigue artistas, comenta y participa en el foro</p>
+                            <p class="text-zinc-500 text-xs">Sigue artistas y participa en el foro</p>
                         </div>
                     </div>
                     <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="artista" onclick="seleccionarTipo('artista')">
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎤</div>
                         <div>
-                            <p class="font-bold text-sm">Artista</p>
-                            <p class="text-zinc-500 text-xs">Sube música, comparte contenido y conecta con fans</p>
+                            <p class="font-bold text-sm">Artista Solista</p>
+                            <p class="text-zinc-500 text-xs">Sube música y conecta con tu audiencia</p>
+                        </div>
+                    </div>
+                    <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="banda" onclick="seleccionarTipo('banda')">
+                        <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎸</div>
+                        <div>
+                            <p class="font-bold text-sm">Banda / Grupo</p>
+                            <p class="text-zinc-500 text-xs">Representa a tu banda y compartan su sonido</p>
                         </div>
                     </div>
                     <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="compositor" onclick="seleccionarTipo('compositor')">
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎼</div>
                         <div>
                             <p class="font-bold text-sm">Compositor / Productor</p>
-                            <p class="text-zinc-500 text-xs">Ofrece tus beats y letras, encuentra artistas para colaborar</p>
+                            <p class="text-zinc-500 text-xs">Ofrece tus beats y haz match con artistas</p>
                         </div>
                     </div>
                 </div>
@@ -97,11 +99,9 @@
                 <button class="btn-primary mt-6" id="btn-paso1" onclick="irPaso2()" disabled>Continuar →</button>
             </div>
 
-            <!-- PASO 2: Datos de cuenta -->
+            <!-- PASO 2 -->
             <div class="step slide-up" id="step-2">
-                <button onclick="irPaso1()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">
-                    ← Volver
-                </button>
+                <button onclick="irPaso1()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">← Volver</button>
                 <h2 class="text-xl font-black mb-1">Crea tu cuenta</h2>
                 <p class="text-zinc-500 text-sm mb-6">Tu correo y contraseña para ingresar.</p>
 
@@ -112,55 +112,41 @@
                 </div>
 
                 <div id="error-paso2" class="hidden mt-3 bg-red-900/30 border border-red-800 text-red-400 text-xs rounded-lg px-4 py-3"></div>
-
                 <button class="btn-primary mt-5" onclick="irPaso3()">Continuar →</button>
             </div>
 
-            <!-- PASO 3: Perfil -->
+            <!-- PASO 3 -->
             <div class="step slide-up" id="step-3">
-                <button onclick="irPaso2()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">
-                    ← Volver
-                </button>
+                <button onclick="irPaso2()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">← Volver</button>
                 <h2 class="text-xl font-black mb-1">Tu perfil</h2>
-                <p class="text-zinc-500 text-sm mb-6">Así te verán los demás en la plataforma.</p>
+                <p class="text-zinc-500 text-sm mb-6">Así te verán en la plataforma.</p>
 
                 <div class="flex flex-col gap-3">
                     <div>
                         <input type="text" id="reg-username" class="input-field" placeholder="@username (sin espacios)" maxlength="30" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
-                        <p class="text-zinc-600 text-xs mt-1 px-1">Solo letras, números y guión bajo</p>
                     </div>
-                    <input type="text" id="reg-nombre" class="input-field" placeholder="Nombre que aparecerá en tu perfil" maxlength="50">
-                    <textarea id="reg-bio" class="input-field resize-none" rows="3" placeholder="Bio corta — cuéntanos quién eres..." maxlength="160"></textarea>
-                    <input type="text" id="reg-ciudad" class="input-field" placeholder="Ciudad (opcional)" maxlength="50">
-
-                    <!-- Géneros (solo para artistas y compositores) -->
+                    <input type="text" id="reg-nombre" class="input-field" placeholder="Nombre en pantalla (Tu nombre o el de la banda)" maxlength="50">
+                    <textarea id="reg-bio" class="input-field resize-none" rows="3" placeholder="Biografía corta..." maxlength="160"></textarea>
+                    
                     <div id="seccion-generos" class="hidden">
                         <p class="text-xs text-zinc-400 font-bold mb-2 uppercase tracking-wider">Géneros que manejas</p>
-                        <div class="flex flex-wrap gap-2" id="generos-lista">
-                            <!-- Se llena con JS -->
-                        </div>
+                        <div class="flex flex-wrap gap-2" id="generos-lista"></div>
                     </div>
                 </div>
 
                 <div id="error-paso3" class="hidden mt-3 bg-red-900/30 border border-red-800 text-red-400 text-xs rounded-lg px-4 py-3"></div>
-
                 <button class="btn-primary mt-5" id="btn-registrar" onclick="registrar()">Crear cuenta</button>
             </div>
 
             <!-- ÉXITO -->
             <div class="step slide-up text-center py-4" id="step-exito">
                 <div class="text-5xl mb-4">🎉</div>
-                <h2 class="text-xl font-black mb-2">¡Bienvenido!</h2>
-                <p class="text-zinc-400 text-sm mb-1">Tu cuenta fue creada.</p>
-                <p class="text-zinc-500 text-xs mb-6">Revisa tu correo para confirmar tu cuenta, luego ingresa.</p>
-                <a href="login.html" class="btn-primary inline-block text-center" style="display:block">Ir al inicio de sesión</a>
+                <h2 class="text-xl font-black mb-2">¡Cuenta creada!</h2>
+                <p class="text-zinc-500 text-xs mb-6">Inicia sesión para comenzar.</p>
+                <a href="login.html" class="btn-primary inline-block w-full">Ir a Iniciar Sesión</a>
             </div>
 
         </div>
-
-        <p class="text-center text-zinc-600 text-sm mt-5">
-            ¿Ya tienes cuenta? <a href="login.html" class="text-red-500 hover:text-red-400 font-bold">Ingresar</a>
-        </p>
     </div>
 
     <script>
@@ -170,29 +156,27 @@
 
     let tipoSeleccionado = null;
     let generosSeleccionados = [];
+    const GENEROS = ['Trap','R&B','Hip Hop','Reggaeton','Pop','Electrónica','Rock','Metal','Indie','Salsa','Cumbia','Jazz','Punk'];
 
-    const GENEROS = ['Trap','R&B','Hip Hop','Reggaeton','Pop','Electrónica','Rock','Cumbia','Salsa','Balada','Indie','Jazz','Soul','Afrobeat','Drill','Corridos'];
-
-    // ── PASO 1 ─────────────────────────────────────────────
     function seleccionarTipo(tipo) {
         tipoSeleccionado = tipo;
         document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('seleccionado'));
         document.querySelector(`[data-tipo="${tipo}"]`).classList.add('seleccionado');
         document.getElementById('btn-paso1').disabled = false;
 
-        // Mostrar géneros si es artista/compositor
         const seccion = document.getElementById('seccion-generos');
-        if (tipo === 'artista' || tipo === 'compositor') {
+        // Mostrar géneros a todos los que hacen música (incluyendo banda ahora)
+        if (tipo === 'artista' || tipo === 'compositor' || tipo === 'banda') {
             seccion.classList.remove('hidden');
             renderGeneros();
+        } else {
+            seccion.classList.add('hidden');
         }
     }
 
     function renderGeneros() {
         document.getElementById('generos-lista').innerHTML = GENEROS.map(g => `
-            <button onclick="toggleGenero('${g}', this)"
-                class="genero-tag px-3 py-1 rounded-full text-xs font-bold border border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-red-600 hover:text-white transition-all"
-                data-genero="${g}">${g}</button>
+            <button onclick="toggleGenero('${g}', this)" class="px-3 py-1 rounded-full text-xs font-bold border border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-red-600 hover:text-white transition-all">${g}</button>
         `).join('');
     }
 
@@ -208,100 +192,53 @@
         }
     }
 
-    function irPaso1() {
-        mostrarPaso(1);
-    }
-
-    function irPaso2() {
-        if (!tipoSeleccionado) return;
-        mostrarPaso(2);
-    }
-
+    function irPaso1() { mostrarPaso(1); }
+    function irPaso2() { if (tipoSeleccionado) mostrarPaso(2); }
     function irPaso3() {
-        const email = document.getElementById('reg-email').value.trim();
-        const pass = document.getElementById('reg-password').value;
-        const pass2 = document.getElementById('reg-password2').value;
         const err = document.getElementById('error-paso2');
-
-        if (!email || !pass || !pass2) { mostrarError(err, 'Completa todos los campos.'); return; }
-        if (pass.length < 6) { mostrarError(err, 'La contraseña debe tener al menos 6 caracteres.'); return; }
-        if (pass !== pass2) { mostrarError(err, 'Las contraseñas no coinciden.'); return; }
-        err.classList.add('hidden');
-        mostrarPaso(3);
+        const e = document.getElementById('reg-email').value, p1 = document.getElementById('reg-password').value, p2 = document.getElementById('reg-password2').value;
+        if (!e || !p1) return mostrarError(err, 'Completa todo.');
+        if (p1.length < 6) return mostrarError(err, 'Mínimo 6 caracteres.');
+        if (p1 !== p2) return mostrarError(err, 'Las contraseñas no coinciden.');
+        err.classList.add('hidden'); mostrarPaso(3);
     }
 
     async function registrar() {
-        const username = document.getElementById('reg-username').value.trim();
-        const nombre = document.getElementById('reg-nombre').value.trim();
-        const bio = document.getElementById('reg-bio').value.trim();
-        const ciudad = document.getElementById('reg-ciudad').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const pass = document.getElementById('reg-password').value;
-        const err = document.getElementById('error-paso3');
         const btn = document.getElementById('btn-registrar');
+        const err = document.getElementById('error-paso3');
+        const user = document.getElementById('reg-username').value.trim(), nom = document.getElementById('reg-nombre').value.trim(), bio = document.getElementById('reg-bio').value.trim();
+        
+        if (!user || !nom) return mostrarError(err, 'Username y nombre son obligatorios.');
 
-        if (!username || !nombre) { mostrarError(err, 'El username y nombre son obligatorios.'); return; }
-        if (username.length < 3) { mostrarError(err, 'El username debe tener al menos 3 caracteres.'); return; }
-
-        btn.disabled = true;
-        btn.textContent = 'Creando cuenta...';
-
+        btn.disabled = true; btn.textContent = 'Creando...';
         const { error } = await client.auth.signUp({
-            email,
-            password: pass,
-            options: {
-                data: {
-                    username,
-                    nombre_display: nombre,
-                    tipo: tipoSeleccionado
-                }
-            }
+            email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-password').value,
+            options: { data: { username: user, nombre_display: nom, tipo: tipoSeleccionado } }
         });
 
         if (error) {
-            mostrarError(err, error.message === 'User already registered' ? 'Este correo ya tiene una cuenta.' : error.message);
-            btn.disabled = false;
-            btn.textContent = 'Crear cuenta';
-            return;
+            btn.disabled = false; btn.textContent = 'Crear cuenta';
+            return mostrarError(err, error.message);
         }
 
-        // Actualizar perfil con datos extra (bio, ciudad, géneros)
-        // El trigger de Supabase crea el perfil base, aquí esperamos un momento y actualizamos
         setTimeout(async () => {
             const { data: { user } } = await client.auth.getUser();
-            if (user) {
-                await client.from('perfiles').update({
-                    bio,
-                    ciudad,
-                    generos: generosSeleccionados
-                }).eq('id', user.id);
-            }
+            if (user) await client.from('perfiles').update({ bio: bio, generos: generosSeleccionados }).eq('id', user.id);
         }, 1500);
 
         mostrarPaso('exito');
     }
 
-    // ── HELPERS ────────────────────────────────────────────
     function mostrarPaso(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('activo'));
         document.getElementById('step-' + n).classList.add('activo');
-
-        // Dots
         [1,2,3].forEach(i => {
-            const dot = document.getElementById('dot-' + i);
-            if (!dot) return;
-            dot.classList.remove('activo','hecho');
-            if (typeof n === 'number') {
-                if (i < n) dot.classList.add('hecho');
-                else if (i === n) dot.classList.add('activo');
-            }
+            const dot = document.getElementById('dot-'+i);
+            if(dot) { dot.classList.remove('activo','hecho'); if (typeof n==='number') { if(i<n) dot.classList.add('hecho'); else if(i===n) dot.classList.add('activo'); } }
         });
     }
-
-    function mostrarError(el, msg) {
-        el.textContent = msg;
-        el.classList.remove('hidden');
-    }
+    function mostrarError(el, msg) { el.textContent = msg; el.classList.remove('hidden'); }
     </script>
 </body>
 </html>

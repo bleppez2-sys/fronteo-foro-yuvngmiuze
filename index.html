@@ -6,8 +6,6 @@
     <title>Yuvng Miuze | Oficial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- EL MOTOR DE INSTAGRAM (NUEVO) -->
-    <script async src="//www.instagram.com/embed.js"></script>
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased pb-20">
 
@@ -90,6 +88,23 @@
             window.miSupabase = window.miSupabase || window.supabase.createClient(supabaseUrl, supabaseKey);
             const client = window.miSupabase;
 
+            // EL DESFIBRILADOR DE INSTAGRAM
+            window.despertarInstagram = function() {
+                setTimeout(() => {
+                    if (typeof window.instgrm !== 'undefined') {
+                        window.instgrm.Embeds.process();
+                    } else {
+                        const script = document.createElement('script');
+                        script.src = "https://www.instagram.com/embed.js";
+                        script.async = true;
+                        script.onload = () => {
+                            if (window.instgrm) window.instgrm.Embeds.process();
+                        };
+                        document.body.appendChild(script);
+                    }
+                }, 100);
+            };
+
             async function cargarTodo() {
                 try {
                     // Perfil
@@ -153,10 +168,8 @@
                 contPreviews.innerHTML = previews.map(p => {
                     let mediaHTML = '';
                     if (p.tipo === 'red_social') {
-                        // Es un iFrame de YouTube Shorts / TikTok o un bloque de Instagram
-                        mediaHTML = `<div class="w-full overflow-hidden flex justify-center rounded-lg mt-2">${p.url_media}</div>`;
+                        mediaHTML = `<div class="w-full overflow-hidden flex justify-center rounded-lg mt-2 bg-white">${p.url_media}</div>`;
                     } else {
-                        // Es un archivo subido al Disco Duro
                         const esVideo = p.url_media.toLowerCase().includes('.mp4');
                         if(esVideo) {
                             mediaHTML = `
@@ -174,9 +187,9 @@
                     }
 
                     return `
-                    <div class="bg-zinc-900 border border-purple-800 p-5 rounded-lg flex flex-col relative overflow-hidden shadow-xl">
+                    <div class="bg-zinc-900 border border-purple-800 p-5 rounded-lg flex flex-col relative shadow-xl">
                         <div class="absolute top-0 left-0 w-1 h-full bg-purple-600"></div>
-                        <div class="ml-2 w-full">
+                        <div class="ml-2 w-full overflow-hidden">
                             <span class="text-[10px] font-black bg-purple-600 text-white px-2 py-1 rounded uppercase tracking-widest">Adelanto Exclusivo</span>
                             <h3 class="text-lg font-black text-white mt-3 mb-1">${p.titulo}</h3>
                             ${mediaHTML}
@@ -185,12 +198,7 @@
                     `;
                 }).join('');
 
-                // NUEVO: Orden de despertar a Instagram después de cargar el contenido
-                setTimeout(() => {
-                    if (window.instgrm) {
-                        window.instgrm.Embeds.process();
-                    }
-                }, 500);
+                window.despertarInstagram();
             }
 
             async function cargarNoticias(client) {
@@ -214,7 +222,7 @@
                     return `
                     <div class="bg-zinc-900 p-6 rounded-lg mb-8 border border-zinc-800 shadow-xl overflow-hidden">
                         <h3 class="text-xl font-black text-white mb-2">${p.titulo}</h3>
-                        <div class="text-zinc-300 text-sm mb-6 leading-relaxed w-full flex flex-col items-start">${p.contenido}</div>
+                        <div class="text-zinc-300 text-sm mb-6 leading-relaxed w-full flex flex-col items-start bg-white rounded">${p.contenido}</div>
                         
                         <h4 class="text-sm font-bold text-zinc-400 border-t border-zinc-800 pt-4 mb-3">Comentarios de Fans</h4>
                         <div class="mb-4 space-y-2">
@@ -230,12 +238,7 @@
                     `
                 }).join('');
 
-                // Por si alguna vez pegas código de Instagram en las Noticias también
-                setTimeout(() => {
-                    if (window.instgrm) {
-                        window.instgrm.Embeds.process();
-                    }
-                }, 500);
+                window.despertarInstagram();
             }
 
             window.comentarGlobal = async function(pid) {

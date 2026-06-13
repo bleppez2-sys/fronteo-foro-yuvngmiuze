@@ -7,7 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-black text-white min-h-screen p-4 md:p-8 hidden" id="cuerpoAdmin">
+<!-- Aquí le quitamos la invisibilidad al cuerpo de la página -->
+<body class="bg-black text-white min-h-screen p-4 md:p-8" id="cuerpoAdmin">
 
     <!-- Barra Superior -->
     <header class="flex justify-between items-center mb-10 bg-zinc-900 p-4 rounded-xl border border-zinc-800">
@@ -52,32 +53,26 @@
 
     <!-- LÓGICA Y SEGURIDAD -->
     <script>
-        
-// 1. Conexión a Supabase
-        const supabaseUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
-        const supabaseKey = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const laUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
+        const laLlave = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
+        const clienteDB = window.supabase.createClient(laUrl, laLlave);
 
-        // 2. El Guardia de Seguridad (Verifica si está logueado)
+        // El Guardia: Si alguien entra sin login, lo patea.
         async function verificarSesion() {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await clienteDB.auth.getUser();
             if (!user) {
-                // Si no hay usuario, lo patea de vuelta al login
                 window.location.href = 'login.html';
-            } else {
-                // Si es el artista, mostramos la pantalla
-                document.getElementById('cuerpoAdmin').classList.remove('hidden');
             }
         }
         verificarSesion();
 
-        // 3. Cerrar Sesión
+        // Botón Cerrar Sesión
         document.getElementById('btnCerrarSesion').addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await clienteDB.auth.signOut();
             window.location.href = 'login.html';
         });
 
-        // 4. Lógica para subir la canción a la Base de Datos
+        // Subir Canción a la BD
         document.getElementById('formCancion').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSubir');
@@ -87,7 +82,7 @@
             const plataforma = document.getElementById('plataforma').value;
             const enlace_embed = document.getElementById('enlace_embed').value;
 
-            const { error } = await supabase
+            const { error } = await clienteDB
                 .from('canciones')
                 .insert([{ titulo: titulo, plataforma: plataforma, enlace_embed: enlace_embed }]);
 
@@ -99,3 +94,6 @@
             }
             btn.textContent = "Publicar Canción";
         });
+    </script>
+</body>
+</html>

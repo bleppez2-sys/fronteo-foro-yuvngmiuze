@@ -1,109 +1,58 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yuvng Miuze | Oficial</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="bg-[#121212] text-white font-sans antialiased pb-20">
+<script>
+        // Usamos una función autoejecutable para que las variables no choquen
+        (function() {
+            const supabaseUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
+            const supabaseKey = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
+            
+            // Si supabase ya existe, no intentamos crearlo de nuevo
+            window.miSupabase = window.miSupabase || window.supabase.createClient(supabaseUrl, supabaseKey);
+            const client = window.miSupabase;
 
-    <header class="bg-gradient-to-b from-zinc-800 to-[#121212] p-10 pt-20 border-b border-zinc-800">
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-            <img id="foto-perfil" src="" alt="Yuvng Miuze" class="w-48 h-48 rounded-full shadow-2xl object-cover bg-zinc-700 hidden">
-            <div id="placeholder-foto" class="w-48 h-48 rounded-full bg-zinc-700 shadow-2xl flex-shrink-0"></div>
-            <div>
-                <span class="text-sm font-bold uppercase tracking-widest text-zinc-300">Artista Verificado</span>
-                <h1 id="nombre-artista" class="text-5xl md:text-7xl font-black mt-2 mb-4">Yuvng Miuze</h1>
-                <p id="bio-artista" class="text-zinc-400 text-sm max-w-lg mb-4">Escucha los últimos lanzamientos oficiales.</p>
-                <div class="flex gap-4 justify-center md:justify-start">
-                    <a href="#" class="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-full text-sm font-bold transition-colors">Instagram</a>
-                    <a href="#" class="bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-full text-sm font-bold transition-colors">YouTube</a>
-                </div>
-            </div>
-        </div>
-    </header>
+            async function cargarTodo() {
+                try {
+                    // Perfil
+                    const { data: perfil } = await client.from('perfil_artista').select('*');
+                    if (perfil && perfil[0]) {
+                        document.getElementById('nombre-artista').innerText = perfil[0].nombre;
+                        document.getElementById('bio-artista').innerText = perfil[0].biografia;
+                    }
 
-    <main class="max-w-4xl mx-auto p-10 grid grid-cols-1 md:grid-cols-3 gap-10">
-        <div class="md:col-span-2">
-            <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">Populares</h2>
-            <div id="contenedor-canciones" class="flex flex-col gap-4 mb-16"></div>
-            <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">Noticias Oficiales</h2>
-            <div id="contenedor-noticias" class="flex flex-col gap-4 mb-16"></div>
-        </div>
+                    // Canciones
+                    const { data: canciones } = await client.from('canciones').select('*');
+                    document.getElementById('contenedor-canciones').innerHTML = (canciones || []).map(c => `<div>${c.enlace_embed}</div>`).join('');
 
-        <div class="md:col-span-1">
-            <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2">Próximos Shows</h2>
-            <div id="contenedor-eventos" class="flex flex-col gap-4 mb-16"></div>
-        </div>
-    </main>
+                    // Eventos
+                    const { data: eventos } = await client.from('eventos').select('*');
+                    document.getElementById('contenedor-eventos').innerHTML = (eventos || []).map(e => `
+                        <div class="bg-zinc-800 p-4 rounded-lg">
+                            <p class="font-bold text-green-400">${e.fecha}</p>
+                            <p class="text-sm">${e.lugar} - ${e.ciudad}</p>
+                        </div>
+                    `).join('');
 
-    <script>
-        const supabaseUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
-        const supabaseKey = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        async function cargarTodo() {
-            // Perfil
-            const { data: perfil } = await supabase.from('perfil_artista').select('*');
-            if (perfil && perfil[0]) {
-                document.getElementById('nombre-artista').innerText = perfil[0].nombre;
-                document.getElementById('bio-artista').innerText = perfil[0].biografia;
-                if(perfil[0].foto_perfil_url) {
-                    const img = document.getElementById('foto-perfil');
-                    img.src = perfil[0].foto_perfil_url;
-                    img.classList.remove('hidden');
-                    document.getElementById('placeholder-foto').classList.add('hidden');
-                }
+                    // Noticias
+                    cargarNoticias(client);
+                } catch (e) { console.error("Error al cargar datos:", e); }
             }
 
-            // Canciones
-            const { data: canciones } = await supabase.from('canciones').select('*');
-            const contCanciones = document.getElementById('contenedor-canciones');
-            contCanciones.innerHTML = (canciones || []).map(c => `<div>${c.enlace_embed}</div>`).join('');
-
-            // Eventos
-            const { data: eventos } = await supabase.from('eventos').select('*');
-            document.getElementById('contenedor-eventos').innerHTML = (eventos || []).map(e => `
-                <div class="bg-zinc-800 p-4 rounded-lg">
-                    <p class="font-bold text-green-400">${e.fecha}</p>
-                    <p class="text-sm">${e.lugar} - ${e.ciudad}</p>
-                </div>
-            `).join('');
-
-            // Noticias
-            cargarNoticias();
-        }
-
-        async function cargarNoticias() {
-            const { data: posts } = await supabase.from('posts').select('*').order('fecha', { ascending: false });
-            const { data: coms } = await supabase.from('comentariospost').select('*');
-            const contNoticias = document.getElementById('contenedor-noticias');
-            contNoticias.innerHTML = (posts || []).map(p => `
-                <div class="bg-zinc-900 p-6 rounded-lg mb-8 border border-zinc-800">
-                    <h3 class="text-xl font-bold">${p.titulo}</h3>
-                    <p class="text-sm text-zinc-400 mb-4">${p.contenido}</p>
-                    <div class="space-y-2">
-                        ${(coms || []).filter(c => c.post_id === p.id).map(c => `<p class="text-xs bg-zinc-800 p-2 rounded"><b>${c.autor}:</b> ${c.mensaje}</p>`).join('')}
+            async function cargarNoticias(client) {
+                const { data: posts } = await client.from('posts').select('*').order('fecha', { ascending: false });
+                const { data: coms } = await client.from('comentariospost').select('*');
+                
+                const contNoticias = document.getElementById('contenedor-noticias');
+                if(!posts || posts.length === 0) { contNoticias.innerHTML = '<p class="text-zinc-500">No hay noticias.</p>'; return; }
+                
+                contNoticias.innerHTML = posts.map(p => `
+                    <div class="bg-zinc-900 p-6 rounded-lg mb-8 border border-zinc-800">
+                        <h3 class="text-xl font-bold">${p.titulo}</h3>
+                        <p class="text-sm text-zinc-400 mb-4">${p.contenido}</p>
+                        <div class="space-y-2">
+                            ${(coms || []).filter(c => c.post_id === p.id).map(c => `<p class="text-xs bg-zinc-800 p-2 rounded"><b>${c.autor}:</b> ${c.mensaje}</p>`).join('')}
+                        </div>
                     </div>
-                    <div class="flex flex-col gap-2 mt-4">
-                        <input id="a-${p.id}" placeholder="Nombre" class="bg-black p-2 text-sm border border-zinc-700">
-                        <textarea id="m-${p.id}" placeholder="Comenta..." class="bg-black p-2 text-sm border border-zinc-700"></textarea>
-                        <button onclick="comentar(${p.id})" class="bg-green-600 text-sm font-bold p-2">Enviar</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+                `).join('');
+            }
 
-        async function comentar(pid) {
-            const autor = document.getElementById('a-'+pid).value;
-            const mensaje = document.getElementById('m-'+pid).value;
-            await supabase.from('comentariospost').insert([{ post_id: pid, autor: autor, mensaje: mensaje }]);
-            cargarNoticias();
-        }
-
-        cargarTodo();
+            cargarTodo();
+        })();
     </script>
-</body>
-</html>

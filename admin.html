@@ -7,124 +7,297 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-black text-white min-h-screen p-4 md:p-8">
+<body class="bg-black text-white min-h-screen p-4 md:p-8" id="cuerpoAdmin">
 
     <!-- Barra Superior -->
     <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 bg-zinc-900 p-4 rounded-xl border border-zinc-800">
         <h1 class="text-2xl font-black"><span class="text-red-600">PANEL</span> DE CONTROL</h1>
-        <div class="flex items-center gap-4">
-            <div class="flex items-center gap-3 bg-black px-4 py-2 rounded-lg border border-zinc-800">
+        
+        <div class="flex items-center gap-4 md:gap-6">
+            <!-- INTERRUPTOR LIVE TIKTOK -->
+            <div class="flex items-center gap-3 bg-black px-4 py-2 rounded-lg border border-zinc-800 shadow-inner">
                 <span class="text-xs font-black tracking-widest text-zinc-500" id="textoEstadoLive">OFFLINE</span>
-                <button id="btnToggleLive" class="w-12 h-6 bg-zinc-600 rounded-full relative transition-colors duration-300">
-                    <div id="bolitaLive" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300"></div>
+                <button id="btnToggleLive" class="w-12 h-6 bg-zinc-600 rounded-full relative transition-colors duration-300 focus:outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+                    <div id="bolitaLive" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 shadow-md"></div>
                 </button>
             </div>
-            <button id="btnCerrarSesion" class="text-sm bg-zinc-800 hover:bg-red-600 text-white py-2 px-4 rounded font-bold">Cerrar Sesión</button>
+
+            <button id="btnCerrarSesion" class="text-sm bg-zinc-800 hover:bg-red-600 text-white py-2 px-4 rounded transition-colors font-bold">
+                Cerrar Sesión
+            </button>
         </div>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-        <!-- COLUMNA 1 -->
+        
+        <!-- COLUMNA 1: NOTICIAS, SHOWS Y PREVIEWS -->
         <div class="space-y-8">
-            <section class="bg-zinc-900 border border-purple-800 p-6 rounded-xl shadow-2xl">
-                <h2 class="text-xl font-bold mb-6 text-purple-400">Subir Preview</h2>
+            
+            <section class="bg-zinc-900 border border-purple-800 p-6 rounded-xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-purple-600"></div>
+                <h2 class="text-xl font-bold mb-6 border-b border-zinc-800 pb-2 text-purple-400">Subir Preview / Adelanto</h2>
                 <form id="formPreview" class="space-y-4">
-                    <input type="text" id="tituloPreview" class="w-full bg-zinc-800 border p-3 rounded" placeholder="Título" required>
-                    <select id="tipoPreview" class="w-full bg-zinc-800 border p-3 rounded" onchange="window.cambiarModoPreview()">
-                        <option value="archivo">Archivo Local</option>
-                        <option value="red_social">Enlace Externo</option>
-                    </select>
-                    <div id="cajaArchivo"><input type="file" id="archivoPreview" accept="audio/*, video/mp4" class="w-full text-sm"></div>
-                    <textarea id="embedPreview" class="hidden w-full bg-zinc-800 border p-3 rounded" placeholder="Pega el código iframe aquí"></textarea>
-                    <button type="submit" id="btnSubirPreview" class="w-full bg-purple-600 py-3 rounded font-bold">Publicar Adelanto</button>
+                    <input type="text" id="tituloPreview" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-purple-600" placeholder="Título (Ej: Intro Album Nuevo)" required>
+                    
+                    <div>
+                        <label class="block text-zinc-400 text-xs font-bold mb-2">Formato del Adelanto</label>
+                        <select id="tipoPreview" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-purple-600" onchange="window.cambiarModoPreview()">
+                            <option value="archivo">Archivo Local (MP3/MP4 - Máx 60s)</option>
+                            <option value="red_social">Enlace Externo (Instagram/TikTok/Shorts Embed)</option>
+                        </select>
+                    </div>
+
+                    <div id="cajaArchivo" class="bg-black p-3 rounded border border-zinc-800">
+                        <input type="file" id="archivoPreview" accept="audio/*, video/mp4" class="w-full text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                        <p class="text-xs text-zinc-500 mt-2 text-center">⏱️ El sistema verificará que dure menos de 1 minuto.</p>
+                    </div>
+
+                    <div id="cajaRedSocial" class="hidden bg-black p-3 rounded border border-zinc-800">
+                        <textarea id="embedPreview" rows="3" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-purple-600" placeholder="Pega el código <iframe...> o el bloque de Instagram aquí"></textarea>
+                    </div>
+
+                    <button type="submit" id="btnSubirPreview" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded transition-colors mt-4">
+                        Publicar Adelanto
+                    </button>
                 </form>
             </section>
 
-            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
-                <h2 class="text-xl font-bold mb-6">Gestionar Adelantos</h2>
-                <div id="listaPreviewsAdmin" class="space-y-3"><p class="text-zinc-500">Cargando...</p></div>
+            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-2xl">
+                <h2 class="text-xl font-bold mb-6 border-b border-zinc-800 pb-2">Escribir Noticia</h2>
+                <form id="formPost" class="space-y-4">
+                    <input type="text" id="tituloPost" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-red-600" placeholder="Título de la Noticia" required>
+                    <textarea id="contenidoPost" rows="4" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-red-600" placeholder="Contenido del post..." required></textarea>
+                    <button type="submit" id="btnSubirPost" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded transition-colors">Publicar Noticia</button>
+                </form>
+            </section>
+
+            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-2xl">
+                <h2 class="text-xl font-bold mb-6 border-b border-zinc-800 pb-2">Agregar Show / Tour</h2>
+                <form id="formEvento" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="text" id="fechaShow" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-red-600" placeholder="Fecha (Ej: 15 Nov)" required>
+                        <input type="text" id="ciudadShow" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-red-600" placeholder="Ciudad (Ej: Concepción)" required>
+                    </div>
+                    <input type="text" id="lugarShow" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-red-600" placeholder="Lugar del evento" required>
+                    <input type="url" id="linkShow" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-red-600" placeholder="Link de Tickets (Opcional)">
+                    <button type="submit" id="btnSubirEvento" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded transition-colors">Confirmar Fecha</button>
+                </form>
             </section>
         </div>
 
-        <!-- COLUMNA 2 -->
+        <!-- COLUMNA 2: GESTIÓN DE MÚSICA OFICIAL -->
         <div class="space-y-8">
-            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
-                <h2 class="text-xl font-bold mb-6">Subir Música Oficial</h2>
+            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-green-600"></div>
+                <h2 class="text-xl font-bold mb-6 border-b border-zinc-800 pb-2 text-green-400">Subir Música Oficial</h2>
                 <form id="formCancion" class="space-y-4">
-                    <input type="text" id="titulo" class="w-full bg-zinc-800 border p-3 rounded" placeholder="Título" required>
-                    <textarea id="enlace_embed" class="w-full bg-zinc-800 border p-3 rounded" placeholder="Código iframe"></textarea>
-                    <button type="submit" class="w-full bg-green-600 py-3 rounded font-bold">Publicar Música</button>
+                    <input type="text" id="titulo" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-green-600" placeholder="Título de la pista oficial" required>
+                    <textarea id="enlace_embed" rows="3" class="w-full bg-zinc-800 border border-zinc-700 text-white rounded p-3 focus:outline-none focus:border-green-600" placeholder="Pega el código <iframe...> de Spotify o YouTube aquí" required></textarea>
+                    <button type="submit" id="btnSubir" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded transition-colors">Publicar Lanzamiento</button>
                 </form>
             </section>
 
-            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
-                <h2 class="text-xl font-bold mb-6">Editar Orden Lanzamientos</h2>
-                <div id="listaCanciones" class="space-y-3"><p class="text-zinc-500">Cargando...</p></div>
+            <section class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-2xl">
+                <h2 class="text-xl font-bold mb-6 border-b border-zinc-800 pb-2">Editar Orden de Lanzamientos</h2>
+                <div id="listaCanciones" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                    <p class="text-zinc-500 text-sm">Cargando catálogo...</p>
+                </div>
             </section>
         </div>
     </div>
 
+    <!-- LÓGICA Y SEGURIDAD BLINDADA -->
     <script>
         (function() {
-            const client = window.supabase.createClient('https://exekwnxlfhukaojxtlcj.supabase.co', 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh');
+            const laUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
+            const laLlave = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
+            window.miSupabase = window.miSupabase || window.supabase.createClient(laUrl, laLlave);
+            const clienteDB = window.miSupabase;
             let idPerfilGlobal = null;
 
-            // Seguridad
-            async function check() { const { data: { user } } = await client.auth.getUser(); if (!user) window.location.href = 'login.html'; }
-            check();
+            async function verificarSesion() {
+                const { data: { user } } = await clienteDB.auth.getUser();
+                if (!user) window.location.href = 'login.html';
+            }
+            verificarSesion();
 
-            // Cargar estado Live y Previews
-            async function init() {
-                const { data: perfil } = await client.from('perfil_artista').select('*');
-                if (perfil && perfil[0]) { idPerfilGlobal = perfil[0].id; actualizarUI(perfil[0].en_vivo); }
-                cargarListaPreviews();
-                cargarListaCanciones();
+            document.getElementById('btnCerrarSesion').addEventListener('click', async () => {
+                await clienteDB.auth.signOut();
+                window.location.href = 'login.html';
+            });
+
+            // LOGICA DEL INTERRUPTOR LIVE
+            async function cargarEstadoLive() {
+                const { data: perfil } = await clienteDB.from('perfil_artista').select('*');
+                if (perfil && perfil[0]) {
+                    idPerfilGlobal = perfil[0].id;
+                    actualizarUIBotonLive(perfil[0].en_vivo);
+                }
             }
 
-            function actualizarUI(enVivo) {
+            function actualizarUIBotonLive(enVivo) {
                 const bolita = document.getElementById('bolitaLive');
-                const btn = document.getElementById('btnToggleLive');
-                const txt = document.getElementById('textoEstadoLive');
-                if(enVivo) { bolita.style.transform = 'translateX(24px)'; btn.className = 'w-12 h-6 bg-red-600 rounded-full relative transition-colors'; txt.textContent = 'EN VIVO'; txt.className = 'text-xs font-black tracking-widest text-red-500'; }
-                else { bolita.style.transform = 'translateX(0px)'; btn.className = 'w-12 h-6 bg-zinc-600 rounded-full relative transition-colors'; txt.textContent = 'OFFLINE'; txt.className = 'text-xs font-black tracking-widest text-zinc-500'; }
+                const fondo = document.getElementById('btnToggleLive');
+                const texto = document.getElementById('textoEstadoLive');
+                
+                if (enVivo) {
+                    bolita.style.transform = 'translateX(24px)';
+                    fondo.classList.remove('bg-zinc-600');
+                    fondo.classList.add('bg-red-600');
+                    texto.textContent = 'EN VIVO';
+                    texto.classList.remove('text-zinc-500');
+                    texto.classList.add('text-red-500');
+                } else {
+                    bolita.style.transform = 'translateX(0px)';
+                    fondo.classList.remove('bg-red-600');
+                    fondo.classList.add('bg-zinc-600');
+                    texto.textContent = 'OFFLINE';
+                    texto.classList.remove('text-red-500');
+                    texto.classList.add('text-zinc-500');
+                }
             }
 
             document.getElementById('btnToggleLive').addEventListener('click', async () => {
-                const estadoActual = document.getElementById('textoEstadoLive').textContent === 'EN VIVO';
-                await client.from('perfil_artista').update({ en_vivo: !estadoActual }).eq('id', idPerfilGlobal);
-                actualizarUI(!estadoActual);
+                if (!idPerfilGlobal) return alert("Error: Perfil no cargado aún.");
+                const texto = document.getElementById('textoEstadoLive').textContent;
+                const nuevoEstado = texto === 'OFFLINE' ? true : false;
+                
+                // Actualizamos visualmente al instante
+                actualizarUIBotonLive(nuevoEstado);
+                // Guardamos en la base de datos
+                await clienteDB.from('perfil_artista').update({ en_vivo: nuevoEstado }).eq('id', idPerfilGlobal);
             });
+
+            // RESTO DE LA LOGICA (Música, Noticias, Eventos)
+            document.getElementById('formPost').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const titulo = document.getElementById('tituloPost').value;
+                const contenido = document.getElementById('contenidoPost').value;
+                await clienteDB.from('posts').insert([{ titulo, contenido }]);
+                alert('¡Noticia publicada con éxito!');
+                document.getElementById('formPost').reset();
+            });
+
+            document.getElementById('formEvento').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fecha = document.getElementById('fechaShow').value;
+                const ciudad = document.getElementById('ciudadShow').value;
+                const lugar = document.getElementById('lugarShow').value;
+                const link_tickets = document.getElementById('linkShow').value;
+                await clienteDB.from('eventos').insert([{ fecha, ciudad, lugar, link_tickets }]);
+                alert('¡Show agregado al tour!');
+                document.getElementById('formEvento').reset();
+            });
+
+            document.getElementById('formCancion').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const titulo = document.getElementById('titulo').value;
+                const enlace_embed = document.getElementById('enlace_embed').value;
+                await clienteDB.from('canciones').insert([{ titulo, enlace_embed, orden: 0 }]);
+                alert('¡Canción subida con éxito!');
+                document.getElementById('formCancion').reset();
+                cargarListaCanciones();
+            });
+
+            async function cargarListaCanciones() {
+                const { data: canciones } = await clienteDB.from('canciones').select('*').order('orden', { ascending: true });
+                const contenedor = document.getElementById('listaCanciones');
+                if(!canciones || canciones.length === 0) {
+                    contenedor.innerHTML = '<p class="text-zinc-500 text-sm">No hay canciones en la base de datos.</p>';
+                    return;
+                }
+                contenedor.innerHTML = canciones.map(c => `
+                    <div class="flex items-center justify-between bg-zinc-800 p-3 rounded border border-zinc-700">
+                        <span class="text-sm font-bold truncate w-1/2 text-white">${c.titulo}</span>
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs text-zinc-400">Orden:</label>
+                            <input type="number" id="orden-${c.id}" value="${c.orden || 0}" class="w-16 bg-black text-white p-1 rounded text-center border border-zinc-600 text-sm focus:outline-none focus:border-green-500">
+                            <button onclick="window.actualizarOrden(${c.id})" class="bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-1 px-3 rounded transition-colors">Guardar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            window.actualizarOrden = async function(id) {
+                const nuevoOrden = document.getElementById('orden-'+id).value;
+                await clienteDB.from('canciones').update({ orden: nuevoOrden }).eq('id', id);
+                alert('¡Orden actualizado!');
+                cargarListaCanciones();
+            };
 
             window.cambiarModoPreview = function() {
                 const tipo = document.getElementById('tipoPreview').value;
-                document.getElementById('cajaArchivo').classList.toggle('hidden', tipo === 'red_social');
-                document.getElementById('embedPreview').classList.toggle('hidden', tipo === 'archivo');
+                if(tipo === 'archivo') {
+                    document.getElementById('cajaArchivo').classList.remove('hidden');
+                    document.getElementById('cajaRedSocial').classList.add('hidden');
+                } else {
+                    document.getElementById('cajaArchivo').classList.add('hidden');
+                    document.getElementById('cajaRedSocial').classList.remove('hidden');
+                }
             };
 
-            async function cargarListaPreviews() {
-                const { data: ps } = await client.from('previews').select('*').order('fecha', { ascending: false });
-                const cont = document.getElementById('listaPreviewsAdmin');
-                if(!ps || ps.length === 0) return cont.innerHTML = '<p class="text-zinc-500 text-sm">No hay adelantos.</p>';
-                cont.innerHTML = ps.map(p => `<div class="flex justify-between items-center bg-zinc-800 p-3 rounded text-sm">${p.titulo} <button onclick="window.borrarPreview(${p.id})" class="text-red-500 font-bold">BORRAR</button></div>`).join('');
-            }
-
-            window.borrarPreview = async function(id) {
-                if(!confirm("¿Seguro?")) return;
-                await client.from('previews').delete().eq('id', id);
-                cargarListaPreviews();
+            const obtenerDuracionMedia = (archivo) => {
+                return new Promise((resolve) => {
+                    const esVideo = archivo.type.startsWith('video');
+                    const elemento = document.createElement(esVideo ? 'video' : 'audio');
+                    elemento.preload = 'metadata';
+                    elemento.onloadedmetadata = function() {
+                        window.URL.revokeObjectURL(elemento.src);
+                        resolve(elemento.duration);
+                    }
+                    elemento.src = window.URL.createObjectURL(archivo);
+                });
             };
 
-            async function cargarListaCanciones() {
-                const { data: cs } = await client.from('canciones').select('*').order('orden', { ascending: true });
-                const cont = document.getElementById('listaCanciones');
-                if(!cs || cs.length === 0) return cont.innerHTML = '<p class="text-zinc-500 text-sm">No hay canciones.</p>';
-                cont.innerHTML = cs.map(c => `<div class="bg-zinc-800 p-3 rounded text-sm">${c.titulo}</div>`).join('');
-            }
+            document.getElementById('formPreview').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btnSubirPreview');
+                const titulo = document.getElementById('tituloPreview').value;
+                const tipo = document.getElementById('tipoPreview').value;
+                let url_media = '';
 
-            document.getElementById('formPreview').addEventListener('submit', async (e) => { e.preventDefault(); alert("Procesando subida..."); /* Aquí iría la lógica de subida, mantuve el formulario listo */ });
-            document.getElementById('btnCerrarSesion').addEventListener('click', async () => { await client.auth.signOut(); window.location.href = 'login.html'; });
+                btn.textContent = "Procesando...";
+                btn.disabled = true;
 
-            init();
+                try {
+                    if(tipo === 'red_social') {
+                        url_media = document.getElementById('embedPreview').value;
+                        if(!url_media) throw new Error("Debes pegar código de la red social.");
+                    } else {
+                        const archivoInput = document.getElementById('archivoPreview');
+                        if(archivoInput.files.length === 0) throw new Error("Debes seleccionar archivo.");
+                        const archivo = archivoInput.files[0];
+                        const duracionSegundos = await obtenerDuracionMedia(archivo);
+                        if(duracionSegundos > 60) throw new Error(`¡Dura ${Math.round(duracionSegundos)}s! Máximo 60s.`);
+
+                        btn.textContent = "Subiendo archivo...";
+                        const extension = archivo.name.split('.').pop();
+                        const nombreUnico = `preview_${Date.now()}.${extension}`;
+                        
+                        const { error: uploadError } = await clienteDB.storage.from('previews').upload(nombreUnico, archivo);
+                        if (uploadError) throw new Error(uploadError.message);
+
+                        const { data } = clienteDB.storage.from('previews').getPublicUrl(nombreUnico);
+                        url_media = data.publicUrl;
+                    }
+
+                    btn.textContent = "Guardando...";
+                    const { error: dbError } = await clienteDB.from('previews').insert([{ titulo, tipo, url_media }]);
+                    if (dbError) throw dbError;
+
+                    alert('¡Adelanto publicado!');
+                    document.getElementById('formPreview').reset();
+                    window.cambiarModoPreview(); 
+                } catch (error) {
+                    alert("ALERTA: " + error.message);
+                } finally {
+                    btn.textContent = "Publicar Adelanto";
+                    btn.disabled = false;
+                }
+            });
+
+            cargarListaCanciones();
+            cargarEstadoLive(); // Arrancamos el botón
         })();
     </script>
 </body>

@@ -90,11 +90,11 @@
         </div>
     </main>
 
-    <!-- DIRECTORIO DE TALENTOS -->
+    <!-- DIRECTORIO DE TALENTOS Y COMUNIDAD -->
     <section class="max-w-6xl mx-auto px-4 pb-20 w-full fade-in-up delay-3">
         <div class="text-center mb-12">
-            <h2 class="text-3xl font-black mb-4">Talento en Ascenso</h2>
-            <p class="text-zinc-400">Haz clic en un perfil para escuchar sus fragmentos oficiales.</p>
+            <h2 class="text-3xl font-black mb-4">La Comunidad Activa</h2>
+            <p class="text-zinc-400">Haz clic en un perfil para conocer su trabajo o descubrir a los fans más fieles.</p>
         </div>
 
         <div class="mb-12">
@@ -110,6 +110,14 @@
         <div class="mb-12">
             <h3 class="text-xl font-bold mb-6 text-white border-b border-zinc-800 pb-2">🎼 Compositores</h3>
             <div id="grid-compositores" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- NUEVA SECCIÓN: FANS DE LA COMUNIDAD -->
+        <div class="mb-12">
+            <h3 class="text-xl font-bold mb-6 text-white border-b border-emerald-900/50 pb-2 flex items-center gap-2">
+                <span class="text-emerald-500">🎧</span> Fans Destacados
+            </h3>
+            <div id="grid-fans" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
     </section>
 
@@ -168,10 +176,10 @@
         }
 
         async function cargarDirectorioRoles() {
-            const { data: perfiles, error } = await client.from('perfiles').select('*').order('id', { ascending: false }).limit(30);
+            const { data: perfiles, error } = await client.from('perfiles').select('*').order('id', { ascending: false }).limit(50);
             if (error) return;
 
-            const renderCards = (lista, containerId) => {
+            const renderCards = (lista, containerId, borderHoverColor = 'hover:border-purple-500/50') => {
                 const container = document.getElementById(containerId);
                 if (lista.length === 0) {
                     container.innerHTML = '<p class="text-zinc-600 text-sm col-span-full">Aún no hay registros en esta categoría.</p>';
@@ -179,13 +187,13 @@
                 }
                 const mostrar = lista.slice(0, 6); 
                 container.innerHTML = mostrar.map(u => `
-                    <a href="visor.html?id=${u.id}" class="bg-[#141414] border border-zinc-800 hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(147,51,234,0.15)] transition-all duration-300 p-5 rounded-2xl flex items-center gap-4 group cursor-pointer block">
+                    <a href="visor.html?id=${u.id}" class="bg-[#141414] border border-zinc-800 ${borderHoverColor} hover:shadow-lg transition-all duration-300 p-5 rounded-2xl flex items-center gap-4 group cursor-pointer block">
                         <div class="w-16 h-16 rounded-full bg-zinc-800 overflow-hidden shrink-0 ring-2 ring-zinc-700 group-hover:ring-purple-500 transition-all">
                             ${u.avatar_url ? `<img src="${u.avatar_url}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}
                         </div>
                         <div class="overflow-hidden text-left flex-1">
                             <h4 class="font-bold text-white truncate group-hover:text-purple-400 transition-colors">${u.nombre_display || '@' + u.username}</h4>
-                            <p class="text-xs text-zinc-500 mt-1 line-clamp-2 leading-relaxed">${u.bio || 'Sin biografía...'}</p>
+                            <p class="text-xs text-zinc-500 mt-1 line-clamp-2 leading-relaxed">${u.bio || 'Fanático de la música local...'}</p>
                         </div>
                     </a>
                 `).join('');
@@ -194,6 +202,8 @@
             renderCards(perfiles.filter(u => u.tipo === 'artista'), 'grid-artistas');
             renderCards(perfiles.filter(u => u.tipo === 'banda'), 'grid-bandas');
             renderCards(perfiles.filter(u => u.tipo === 'compositor'), 'grid-compositores');
+            // Cargar a los fans con un efecto verde/esmeralda para distinguirlos
+            renderCards(perfiles.filter(u => u.tipo === 'fan'), 'grid-fans', 'hover:border-emerald-500/50');
         }
 
         verificarSesion();

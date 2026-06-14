@@ -10,26 +10,26 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
 
-        .tipo-card { cursor: pointer; transition: all 0.2s ease; border: 2px solid transparent; }
-        .tipo-card:hover { border-color: #52525b; transform: translateY(-2px); }
-        .tipo-card.seleccionado { border-color: #dc2626; background: rgba(220,38,38,0.08); }
-        .tipo-card.seleccionado .tipo-icon { background: #dc2626; }
+        .tipo-card { cursor: pointer; transition: all 0.3s ease; border: 1px solid #27272a; background: #141414; }
+        .tipo-card:hover { border-color: #7c3aed; transform: translateY(-2px); }
+        .tipo-card.seleccionado { border-color: #7c3aed; background: rgba(124,58,237,0.1); }
+        .tipo-card.seleccionado .tipo-icon { background: #7c3aed; }
 
         .input-field {
-            width: 100%; background: #1c1c1c; border: 1.5px solid #27272a;
-            color: #fff; border-radius: 10px; padding: 12px 16px;
-            font-size: 14px; transition: border-color 0.2s;
+            width: 100%; background: #1c1c1c; border: 1px solid #27272a;
+            color: #fff; border-radius: 12px; padding: 14px 16px;
+            font-size: 14px; transition: all 0.2s;
         }
-        .input-field:focus { outline: none; border-color: #dc2626; }
-        .input-field::placeholder { color: #52525b; }
-
+        .input-field:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
+        
         .btn-primary {
-            width: 100%; background: #dc2626; color: #fff; font-weight: 700;
-            padding: 14px; border-radius: 10px; font-size: 15px;
-            transition: background 0.2s, transform 0.1s; border: none; cursor: pointer;
+            width: 100%; background: #7c3aed; color: #fff; font-weight: 700;
+            padding: 14px; border-radius: 12px; font-size: 15px;
+            transition: all 0.2s; border: none; cursor: pointer;
+            box-shadow: 0 0 15px rgba(124,58,237,0.3);
         }
-        .btn-primary:hover { background: #b91c1c; }
-        .btn-primary:disabled { background: #3f3f46; cursor: not-allowed; }
+        .btn-primary:hover { background: #6d28d9; transform: translateY(-2px); box-shadow: 0 0 20px rgba(124,58,237,0.5); }
+        .btn-primary:disabled { background: #3f3f46; box-shadow: none; cursor: not-allowed; }
 
         .slide-up { animation: slideUp 0.4s ease forwards; }
         @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
@@ -38,8 +38,8 @@
         .step.activo { display: block; }
 
         .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #27272a; transition: all 0.3s; }
-        .step-dot.activo { background: #dc2626; width: 24px; border-radius: 4px; }
-        .step-dot.hecho { background: #16a34a; }
+        .step-dot.activo { background: #7c3aed; width: 24px; border-radius: 4px; }
+        .step-dot.hecho { background: #10b981; }
     </style>
 </head>
 <body class="bg-[#0e0e0e] text-white min-h-screen flex flex-col items-center justify-center p-4">
@@ -47,9 +47,9 @@
     <div class="w-full max-w-md">
         <div class="text-center mb-8">
             <a href="index.html" class="inline-block">
-                <h1 class="text-2xl font-black tracking-tight">ARTS<span class="text-red-600">FORO</span></h1>
+                <h1 class="text-3xl font-black tracking-tight">MUSA<span class="text-purple-600">CONNECT</span></h1>
             </a>
-            <p class="text-zinc-500 text-sm mt-1">La comunidad de música independiente</p>
+            <p class="text-zinc-500 text-sm mt-1">Tu ecosistema musical</p>
         </div>
 
         <div class="flex items-center justify-center gap-2 mb-8">
@@ -58,40 +58,39 @@
             <div class="step-dot" id="dot-3"></div>
         </div>
 
-        <div class="bg-[#141414] border border-zinc-800 rounded-2xl p-6">
+        <div class="bg-[#141414] border border-zinc-800 rounded-3xl p-8 shadow-2xl">
 
-            <!-- PASO 1 -->
             <div class="step activo slide-up" id="step-1">
-                <h2 class="text-xl font-black mb-1">¿Quién eres?</h2>
-                <p class="text-zinc-500 text-sm mb-6">Elige el tipo de cuenta que mejor te describe.</p>
+                <h2 class="text-xl font-black mb-1">¿Qué haces en la música?</h2>
+                <p class="text-zinc-500 text-sm mb-6">Elige tu rol principal.</p>
 
                 <div class="flex flex-col gap-3" id="tipos-container">
-                    <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="fan" onclick="seleccionarTipo('fan')">
+                    <div class="tipo-card rounded-xl p-4 flex items-center gap-4" data-tipo="fan" onclick="seleccionarTipo('fan')">
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎧</div>
                         <div>
                             <p class="font-bold text-sm">Fan</p>
-                            <p class="text-zinc-500 text-xs">Sigue artistas y participa en el foro</p>
+                            <p class="text-zinc-500 text-xs">Descubre artistas y debate</p>
                         </div>
                     </div>
-                    <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="artista" onclick="seleccionarTipo('artista')">
+                    <div class="tipo-card rounded-xl p-4 flex items-center gap-4" data-tipo="artista" onclick="seleccionarTipo('artista')">
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎤</div>
                         <div>
-                            <p class="font-bold text-sm">Artista Solista</p>
-                            <p class="text-zinc-500 text-xs">Sube música y conecta con tu audiencia</p>
+                            <p class="font-bold text-sm">Artista</p>
+                            <p class="text-zinc-500 text-xs">Sube música y adelantos</p>
                         </div>
                     </div>
-                    <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="banda" onclick="seleccionarTipo('banda')">
+                    <div class="tipo-card rounded-xl p-4 flex items-center gap-4" data-tipo="banda" onclick="seleccionarTipo('banda')">
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎸</div>
                         <div>
-                            <p class="font-bold text-sm">Banda / Grupo</p>
-                            <p class="text-zinc-500 text-xs">Representa a tu banda y compartan su sonido</p>
+                            <p class="font-bold text-sm">Banda</p>
+                            <p class="text-zinc-500 text-xs">Gestión grupal de música</p>
                         </div>
                     </div>
-                    <div class="tipo-card bg-zinc-900 rounded-xl p-4 flex items-center gap-4" data-tipo="compositor" onclick="seleccionarTipo('compositor')">
+                    <div class="tipo-card rounded-xl p-4 flex items-center gap-4" data-tipo="compositor" onclick="seleccionarTipo('compositor')">
                         <div class="tipo-icon w-10 h-10 rounded-xl bg-zinc-800 flex items-center justify-center text-xl transition-colors flex-shrink-0">🎼</div>
                         <div>
-                            <p class="font-bold text-sm">Compositor / Productor</p>
-                            <p class="text-zinc-500 text-xs">Ofrece tus beats y haz match con artistas</p>
+                            <p class="font-bold text-sm">Compositor</p>
+                            <p class="text-zinc-500 text-xs">Publica beats y colabora</p>
                         </div>
                     </div>
                 </div>
@@ -99,50 +98,45 @@
                 <button class="btn-primary mt-6" id="btn-paso1" onclick="irPaso2()" disabled>Continuar →</button>
             </div>
 
-            <!-- PASO 2 -->
             <div class="step slide-up" id="step-2">
                 <button onclick="irPaso1()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">← Volver</button>
-                <h2 class="text-xl font-black mb-1">Crea tu cuenta</h2>
-                <p class="text-zinc-500 text-sm mb-6">Tu correo y contraseña para ingresar.</p>
+                <h2 class="text-xl font-black mb-1">Credenciales</h2>
+                <p class="text-zinc-500 text-sm mb-6">Tus datos para acceder.</p>
 
                 <div class="flex flex-col gap-3">
                     <input type="email" id="reg-email" class="input-field" placeholder="Correo electrónico">
-                    <input type="password" id="reg-password" class="input-field" placeholder="Contraseña (mín. 6 caracteres)">
+                    <input type="password" id="reg-password" class="input-field" placeholder="Contraseña">
                     <input type="password" id="reg-password2" class="input-field" placeholder="Confirmar contraseña">
                 </div>
 
-                <div id="error-paso2" class="hidden mt-3 bg-red-900/30 border border-red-800 text-red-400 text-xs rounded-lg px-4 py-3"></div>
+                <div id="error-paso2" class="hidden mt-3 bg-red-900/30 border border-red-800 text-red-400 text-xs rounded-lg px-4 py-3 text-center"></div>
                 <button class="btn-primary mt-5" onclick="irPaso3()">Continuar →</button>
             </div>
 
-            <!-- PASO 3 -->
             <div class="step slide-up" id="step-3">
                 <button onclick="irPaso2()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">← Volver</button>
-                <h2 class="text-xl font-black mb-1">Tu perfil</h2>
-                <p class="text-zinc-500 text-sm mb-6">Así te verán en la plataforma.</p>
+                <h2 class="text-xl font-black mb-1">Configura tu perfil</h2>
+                <p class="text-zinc-500 text-sm mb-6">Dale identidad a tu cuenta.</p>
 
                 <div class="flex flex-col gap-3">
-                    <div>
-                        <input type="text" id="reg-username" class="input-field" placeholder="@username (sin espacios)" maxlength="30" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
-                    </div>
-                    <input type="text" id="reg-nombre" class="input-field" placeholder="Nombre en pantalla (Tu nombre o el de la banda)" maxlength="50">
-                    <textarea id="reg-bio" class="input-field resize-none" rows="3" placeholder="Biografía corta..." maxlength="160"></textarea>
+                    <input type="text" id="reg-username" class="input-field" placeholder="@usuario (sin espacios)" maxlength="30" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
+                    <input type="text" id="reg-nombre" class="input-field" placeholder="Nombre completo o banda" maxlength="50">
+                    <textarea id="reg-bio" class="input-field resize-none" rows="3" placeholder="Tu bio..." maxlength="160"></textarea>
                     
                     <div id="seccion-generos" class="hidden">
-                        <p class="text-xs text-zinc-400 font-bold mb-2 uppercase tracking-wider">Géneros que manejas</p>
+                        <p class="text-[10px] text-zinc-400 font-bold mb-2 uppercase tracking-wider">Géneros (selecciona hasta 5)</p>
                         <div class="flex flex-wrap gap-2" id="generos-lista"></div>
                     </div>
                 </div>
 
-                <div id="error-paso3" class="hidden mt-3 bg-red-900/30 border border-red-800 text-red-400 text-xs rounded-lg px-4 py-3"></div>
-                <button class="btn-primary mt-5" id="btn-registrar" onclick="registrar()">Crear cuenta</button>
+                <div id="error-paso3" class="hidden mt-3 bg-red-900/30 border border-red-800 text-red-400 text-xs rounded-lg px-4 py-3 text-center"></div>
+                <button class="btn-primary mt-5" id="btn-registrar" onclick="registrar()">Crear mi cuenta</button>
             </div>
 
-            <!-- ÉXITO -->
             <div class="step slide-up text-center py-4" id="step-exito">
-                <div class="text-5xl mb-4">🎉</div>
-                <h2 class="text-xl font-black mb-2">¡Cuenta creada!</h2>
-                <p class="text-zinc-500 text-xs mb-6">Inicia sesión para comenzar.</p>
+                <div class="text-5xl mb-4">✨</div>
+                <h2 class="text-xl font-black mb-2">¡Bienvenido a la comunidad!</h2>
+                <p class="text-zinc-500 text-xs mb-6">Todo listo para empezar.</p>
                 <a href="login.html" class="btn-primary inline-block w-full">Ir a Iniciar Sesión</a>
             </div>
 
@@ -165,8 +159,7 @@
         document.getElementById('btn-paso1').disabled = false;
 
         const seccion = document.getElementById('seccion-generos');
-        // Mostrar géneros a todos los que hacen música (incluyendo banda ahora)
-        if (tipo === 'artista' || tipo === 'compositor' || tipo === 'banda') {
+        if (tipo !== 'fan') {
             seccion.classList.remove('hidden');
             renderGeneros();
         } else {
@@ -176,19 +169,19 @@
 
     function renderGeneros() {
         document.getElementById('generos-lista').innerHTML = GENEROS.map(g => `
-            <button onclick="toggleGenero('${g}', this)" class="px-3 py-1 rounded-full text-xs font-bold border border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-red-600 hover:text-white transition-all">${g}</button>
+            <button onclick="toggleGenero('${g}', this)" class="px-3 py-1 rounded-full text-xs font-bold border border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-purple-500 transition-all">${g}</button>
         `).join('');
     }
 
     function toggleGenero(g, el) {
         if (generosSeleccionados.includes(g)) {
             generosSeleccionados = generosSeleccionados.filter(x => x !== g);
-            el.classList.remove('border-red-600','text-white','bg-red-900/20');
-            el.classList.add('border-zinc-700','text-zinc-400','bg-zinc-900');
+            el.classList.remove('border-purple-500','text-white','bg-purple-900/20');
+            el.classList.add('border-zinc-800','text-zinc-400','bg-zinc-900');
         } else if (generosSeleccionados.length < 5) {
             generosSeleccionados.push(g);
-            el.classList.add('border-red-600','text-white','bg-red-900/20');
-            el.classList.remove('border-zinc-700','text-zinc-400','bg-zinc-900');
+            el.classList.add('border-purple-500','text-white','bg-purple-900/20');
+            el.classList.remove('border-zinc-800','text-zinc-400','bg-zinc-900');
         }
     }
 
@@ -210,7 +203,7 @@
         
         if (!user || !nom) return mostrarError(err, 'Username y nombre son obligatorios.');
 
-        btn.disabled = true; btn.textContent = 'Creando...';
+        btn.disabled = true; btn.textContent = 'Procesando...';
         const { error } = await client.auth.signUp({
             email: document.getElementById('reg-email').value,
             password: document.getElementById('reg-password').value,
@@ -232,7 +225,7 @@
 
     function mostrarPaso(n) {
         document.querySelectorAll('.step').forEach(s => s.classList.remove('activo'));
-        document.getElementById('step-' + n).classList.add('activo');
+        document.getElementById('step-' + (typeof n === 'number' ? n : 'exito')).classList.add('activo');
         [1,2,3].forEach(i => {
             const dot = document.getElementById('dot-'+i);
             if(dot) { dot.classList.remove('activo','hecho'); if (typeof n==='number') { if(i<n) dot.classList.add('hecho'); else if(i===n) dot.classList.add('activo'); } }

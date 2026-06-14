@@ -94,7 +94,10 @@
             <!-- Panel Preview -->
             <div id="panel-preview" class="hidden bg-[#141414] p-5 rounded-xl border border-zinc-800 fade-in">
                 <input type="text" id="input-titulo-preview" placeholder="Título del video" class="input-field mb-3">
-                <input type="file" id="input-file-preview" accept="video/mp4" class="input-field mb-4 text-zinc-400 p-2">
+                <input type="file" id="input-file-preview" accept="video/mp4" class="input-field mb-2 text-zinc-400 p-2">
+                <button onclick="document.getElementById('modal-tutorial-preview').classList.remove('hidden')" class="text-purple-400 hover:text-purple-300 text-xs font-bold mb-4 inline-flex items-center gap-1">
+                    ❓ ¿Qué video debo subir?
+                </button>
                 <button onclick="publicarPreview()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg transition-colors">Subir Preview</button>
             </div>
 
@@ -137,7 +140,7 @@
                         <h2 class="text-xl font-bold text-red-500">Transmisión en Vivo</h2>
                     </div>
                     
-                    <div class="bg-[#0a0a0a] border border-zinc-800 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.1)] relative group">
+                    <div id="stream-box" class="bg-[#0a0a0a] border border-zinc-800 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.1)] relative group">
                         <div class="aspect-video bg-zinc-900 flex flex-col items-center justify-center border-b border-zinc-800 relative">
                             <span class="text-4xl mb-2 opacity-50">📡</span>
                             <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Stream Offline</p>
@@ -147,9 +150,9 @@
                                 <h3 class="font-black text-white text-sm">Multistream Global</h3>
                                 <p class="text-[10px] text-zinc-500">Twitch / YouTube / TikTok</p>
                             </div>
-                            <button class="bg-red-600 hover:bg-red-500 text-white text-[10px] font-black px-4 py-2 rounded-lg uppercase tracking-wider transition-colors">
+                            <a href="editar-perfil.html" id="btn-stream" class="bg-red-600 hover:bg-red-500 text-white text-[10px] font-black px-4 py-2 rounded-lg uppercase tracking-wider transition-colors">
                                 Conectar
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -209,6 +212,32 @@
         </div>
     </div>
 
+    <!-- MODAL TUTORIAL: ADELANTOS / PREVIEWS -->
+    <div id="modal-tutorial-preview" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="bg-[#141414] border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl fade-in">
+            <div class="sticky top-0 bg-[#141414] border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-black">🎬 Cómo subir tu Adelanto</h3>
+                <button onclick="document.getElementById('modal-tutorial-preview').classList.add('hidden')" class="text-zinc-400 hover:text-white text-xl leading-none">✕</button>
+            </div>
+            <div class="p-6 space-y-4 text-sm text-zinc-300 leading-relaxed">
+                <p class="text-zinc-400">Los adelantos son videos cortos y exclusivos para tus fans registrados. Aquí puedes mostrar detrás de cámaras, sneak peeks de canciones nuevas o clips de ensayos.</p>
+
+                <div class="bg-purple-900/20 border border-purple-800/50 rounded-xl p-4">
+                    <p class="text-purple-300 text-xs"><span class="font-black">⏱️ Duración máxima: 1 minuto.</span> Los videos más largos no se mostrarán correctamente en el reproductor del perfil. Recorta tu clip antes de subirlo.</p>
+                </div>
+
+                <ol class="list-decimal list-inside space-y-1.5 text-zinc-300">
+                    <li>Graba o edita tu video y recórtalo a <span class="text-white font-semibold">60 segundos o menos</span>.</li>
+                    <li>Guárdalo en formato <span class="text-white font-semibold">MP4</span>.</li>
+                    <li>Escribe un título corto y llamativo.</li>
+                    <li>Selecciona el archivo y presiona <span class="text-white font-semibold">"Subir Preview"</span>.</li>
+                </ol>
+
+                <p class="text-zinc-500 text-xs">💡 Tip: aplicaciones como CapCut, InShot o el editor de tu celular te permiten recortar y comprimir videos fácilmente antes de subirlos.</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         const supabaseUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
         const supabaseKey = 'sb_publishable_JtSnzoWtEwAHhmGvcpKe0g_OfciTXzh';
@@ -238,6 +267,20 @@
                 if (perfil.link_instagram) linksHtml += `<a href="${perfil.link_instagram}" target="_blank" class="bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white px-4 py-2 rounded-full text-[11px] font-black tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_15px_rgba(253,29,29,0.3)]">📸 IG</a>`;
                 if (perfil.link_spotify) linksHtml += `<a href="${perfil.link_spotify}" target="_blank" class="bg-[#1DB954] text-black px-4 py-2 rounded-full text-[11px] font-black tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_15px_rgba(29,185,84,0.3)]">🎵 Spotify</a>`;
                 document.getElementById('profile-links').innerHTML = linksHtml;
+
+                // Estado del stream
+                const btnStream = document.getElementById('btn-stream');
+                const streamBox = document.getElementById('stream-box');
+                if (perfil.link_stream) {
+                    btnStream.textContent = "Ver mi stream";
+                    btnStream.href = perfil.link_stream;
+                    btnStream.target = "_blank";
+                    streamBox.querySelector('p.text-zinc-500').textContent = "URL configurada";
+                } else {
+                    btnStream.textContent = "Conectar";
+                    btnStream.href = "editar-perfil.html";
+                    btnStream.removeAttribute('target');
+                }
             }
 
             cargarLanzamientos();
@@ -352,7 +395,21 @@
             const titulo = document.getElementById('input-titulo-preview').value.trim();
             const file = document.getElementById('input-file-preview').files[0];
             if(!titulo || !file) return alert("Falta archivo o título.");
-            
+
+            // Validar duración máxima de 1 minuto
+            const duracionOk = await new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.onloadedmetadata = function() {
+                    window.URL.revokeObjectURL(video.src);
+                    resolve(video.duration <= 61); // pequeño margen
+                };
+                video.onerror = () => resolve(true); // si no se puede leer, dejamos pasar
+                video.src = URL.createObjectURL(file);
+            });
+
+            if (!duracionOk) return alert("El video debe durar máximo 1 minuto. Recórtalo e inténtalo de nuevo.");
+
             const filePath = `${miUsuarioId}-${Date.now()}.mp4`;
             await client.storage.from('previews').upload(filePath, file);
             const { data: { publicUrl } } = client.storage.from('previews').getPublicUrl(filePath);

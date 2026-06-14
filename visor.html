@@ -44,7 +44,7 @@
                     
                     <div class="flex items-center gap-3">
                         <div id="visor-links" class="flex flex-wrap gap-2"></div>
-                        <button class="bg-white hover:bg-zinc-200 text-black font-black uppercase tracking-widest text-xs px-6 py-2.5 rounded-full transition-colors">Seguir</button>
+                        <button id="btn-seguir" onclick="toggleSeguir()" class="hidden bg-white hover:bg-zinc-200 text-black font-black uppercase tracking-widest text-xs px-6 py-2.5 rounded-full transition-colors">Seguir</button>
                     </div>
                 </div>
                 <p id="visor-bio" class="text-zinc-300 text-sm mt-6 border-t border-zinc-800/60 pt-4 leading-relaxed">...</p>
@@ -96,6 +96,8 @@
         // Magia: Obtener la ID del usuario desde la URL (ej: visor.html?id=1234)
         const urlParams = new URLSearchParams(window.location.search);
         const targetId = urlParams.get('id');
+        let miUsuarioId = null;
+        let estoySiguiendo = false;
 
         async function cargarPerfilPublico() {
             if (!targetId) { window.location.href = 'index.html'; return; }
@@ -153,8 +155,10 @@
             const { data: { session } } = await client.auth.getSession();
             const navActions = document.getElementById('visor-nav-actions');
             const adelantosBox = document.getElementById('adelantos-box');
+            const btnSeguir = document.getElementById('btn-seguir');
 
             if (session) {
+                miUsuarioId = session.user.id;
                 navActions.innerHTML = `<a href="profile.html" class="bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-5 py-2 rounded-full transition-colors border border-zinc-700">Mi Perfil</a>`;
 
                 adelantosBox.innerHTML = `
@@ -163,9 +167,58 @@
                     <h3 class="text-lg font-black text-white relative z-10 mb-2">Contenido Exclusivo</h3>
                     <p class="text-zinc-400 text-sm max-w-sm relative z-10 mb-6">Sigue a este artista para desbloquear sus adelantos y videos próximamente.</p>
                 `;
+
+                // Mostrar botón Seguir solo si no es mi propio perfil
+                if (miUsuarioId !== targetId) {
+                    btnSeguir.classList.remove('hidden');
+
+                    const { data: existente } = await client.from('seguidores')
+                        .select('id')
+                        .eq('seguidor_id', miUsuarioId)
+                        .eq('seguido_id', targetId)
+                        .maybeSingle();
+
+                    estoySiguiendo = !!existente;
+                    actualizarBotonSeguir();
+                }
             } else {
                 navActions.innerHTML = `<a href="register.html" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-5 py-2 rounded-full transition-colors shadow-[0_0_15px_rgba(147,51,234,0.4)]">Crear mi perfil</a>`;
+                // Visitante sin sesión: mostrar botón que invita a registrarse
+                btnSeguir.classList.remove('hidden');
+                btnSeguir.textContent = "Seguir";
+                btnSeguir.onclick = () => window.location.href = 'register.html';
             }
+        }
+
+        function actualizarBotonSeguir() {
+            const btnSeguir = document.getElementById('btn-seguir');
+            if (estoySiguiendo) {
+                btnSeguir.textContent = "Siguiendo";
+                btnSeguir.className = "bg-zinc-800 border border-zinc-700 hover:border-red-500 hover:text-red-400 text-white font-black uppercase tracking-widest text-xs px-6 py-2.5 rounded-full transition-colors";
+            } else {
+                btnSeguir.textContent = "Seguir";
+                btnSeguir.className = "bg-white hover:bg-zinc-200 text-black font-black uppercase tracking-widest text-xs px-6 py-2.5 rounded-full transition-colors";
+            }
+        }
+
+        window.toggleSeguir = async function() {
+            const btnSeguir = document.getElementById('btn-seguir');
+            btnSeguir.disabled = true;
+
+            if (estoySiguiendo) {
+                const { error } = await client.from('seguidores')
+                    .delete()
+                    .eq('seguidor_id', miUsuarioId)
+                    .eq('seguido_id', targetId);
+                if (!error) estoySiguiendo = false;
+            } else {
+                const { error } = await client.from('seguidores')
+                    .insert([{ seguidor_id: miUsuarioId, seguido_id: targetId }]);
+                if (!error) estoySiguiendo = true;
+            }
+
+            btnSeguir.disabled = false;
+            actualizarBotonSeguir();
         }
 
         cargarPerfilPublico();

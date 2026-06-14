@@ -70,6 +70,12 @@
                     </div>
                 </div>
 
+                <div>
+                    <label class="text-xs font-bold text-zinc-400 block mb-1">🔴 URL de tu Stream en Vivo (Twitch / YouTube / TikTok)</label>
+                    <input type="text" id="link-stream" class="input-field text-xs" placeholder="https://twitch.tv/tu_canal">
+                    <p class="text-[10px] text-zinc-500 mt-1">Esta es la URL que se mostrará en tu perfil cuando hagas clic en "Conectar" del panel En Vivo.</p>
+                </div>
+
                 <!-- Elemento msg-box posicionado correctamente -->
                 <div id="msg-box" class="hidden text-xs px-3 py-2 rounded-lg mb-4"></div>
 
@@ -99,6 +105,7 @@
                 document.getElementById('perfil-bio').value = perfil.bio || '';
                 document.getElementById('link-instagram').value = perfil.link_instagram || '';
                 document.getElementById('link-spotify').value = perfil.link_spotify || '';
+                document.getElementById('link-stream').value = perfil.link_stream || '';
                 
                 urlFotoFinal = perfil.avatar_url;
                 if(urlFotoFinal) {
@@ -136,6 +143,7 @@
             const bio = document.getElementById('perfil-bio').value.trim();
             const insta = document.getElementById('link-instagram').value.trim();
             const spoty = document.getElementById('link-spotify').value.trim();
+            const stream = document.getElementById('link-stream').value.trim();
 
             if (!nombre) return mostrarMensaje("El nombre en pantalla es obligatorio.", false);
 
@@ -170,7 +178,8 @@
                 bio: bio,
                 avatar_url: urlFotoFinal,
                 link_instagram: insta,
-                link_spotify: spoty
+                link_spotify: spoty,
+                link_stream: stream
             }).eq('id', usuarioActual.id);
 
             btn.disabled = false;

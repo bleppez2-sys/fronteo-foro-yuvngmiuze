@@ -116,15 +116,20 @@
             <div class="step slide-up" id="step-3">
                 <button onclick="irPaso2()" class="text-zinc-500 hover:text-white text-sm mb-5 flex items-center gap-1 transition-colors">← Volver</button>
                 <h2 class="text-xl font-black mb-1">Configura tu perfil</h2>
-                <p class="text-zinc-500 text-sm mb-6">Dale identidad a tu cuenta.</p>
+                <p class="text-zinc-500 text-sm mb-6">Dale identidad a tu cuenta. Los campos marcados con (*) son obligatorios.</p>
 
                 <div class="flex flex-col gap-3">
-                    <input type="text" id="reg-username" class="input-field" placeholder="@usuario (sin espacios)" maxlength="30" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
-                    <input type="text" id="reg-nombre" class="input-field" placeholder="Nombre completo o banda" maxlength="50">
+                    <input type="text" id="reg-username" class="input-field" placeholder="@usuario (sin espacios) *" maxlength="30" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')">
+                    <input type="text" id="reg-nombre" class="input-field" placeholder="Nombre artístico o en pantalla *" maxlength="50">
 
                     <div>
-                        <input type="text" id="reg-nombre-legal" class="input-field" placeholder="Nombre y apellido" maxlength="80">
-                        <p class="text-[10px] text-zinc-500 mt-1.5 px-1">🔒 No será visible en tu perfil público.</p>
+                        <input type="text" id="reg-nombre-legal" class="input-field" placeholder="Nombre y apellido real *" maxlength="80">
+                        <p class="text-[10px] text-zinc-500 mt-1.5 px-1">🔒 Obligatorio. No será visible en tu perfil público.</p>
+                    </div>
+
+                    <div>
+                        <input type="number" id="reg-edad" class="input-field" placeholder="Tu edad *" min="13" max="100">
+                        <p class="text-[10px] text-zinc-500 mt-1.5 px-1">🔒 Obligatorio para acceder y organizar los eventos.</p>
                     </div>
 
                     <textarea id="reg-bio" class="input-field resize-none" rows="3" placeholder="Tu bio..." maxlength="160"></textarea>
@@ -205,26 +210,57 @@
     async function registrar() {
         const btn = document.getElementById('btn-registrar');
         const err = document.getElementById('error-paso3');
-        const user = document.getElementById('reg-username').value.trim(), nom = document.getElementById('reg-nombre').value.trim(), bio = document.getElementById('reg-bio').value.trim();
-        const nombreLegal = document.getElementById('reg-nombre-legal').value.trim();
         
-        if (!user || !nom) return mostrarError(err, 'Username y nombre son obligatorios.');
+        const user = document.getElementById('reg-username').value.trim();
+        const nom = document.getElementById('reg-nombre').value.trim();
+        const bio = document.getElementById('reg-bio').value.trim();
+        const nombreLegal = document.getElementById('reg-nombre-legal').value.trim();
+        const edad = document.getElementById('reg-edad').value.trim();
+        
+        // Validación estricta de campos obligatorios
+        if (!user || !nom || !nombreLegal || !edad) {
+            return mostrarError(err, 'El usuario, los nombres y la edad son obligatorios.');
+        }
 
-        btn.disabled = true; btn.textContent = 'Procesando...';
+        if (parseInt(edad) < 13) {
+            return mostrarError(err, 'Debes tener al menos 13 años para registrarte en la plataforma.');
+        }
+
+        btn.disabled = true; 
+        btn.textContent = 'Procesando...';
+        
+        // Se guarda en Auth Metadata de Supabase
         const { error } = await client.auth.signUp({
             email: document.getElementById('reg-email').value,
             password: document.getElementById('reg-password').value,
-            options: { data: { username: user, nombre_display: nom, tipo: tipoSeleccionado } }
+            options: { 
+                data: { 
+                    username: user, 
+                    nombre_display: nom, 
+                    tipo: tipoSeleccionado,
+                    nombre_legal: nombreLegal,
+                    edad: parseInt(edad)
+                } 
+            }
         });
 
         if (error) {
-            btn.disabled = false; btn.textContent = 'Crear cuenta';
+            btn.disabled = false; 
+            btn.textContent = 'Crear cuenta';
             return mostrarError(err, error.message);
         }
 
+        // Se guarda en la tabla pública 'perfiles'
         setTimeout(async () => {
             const { data: { user } } = await client.auth.getUser();
-            if (user) await client.from('perfiles').update({ bio: bio, generos: generosSeleccionados, nombre_legal: nombreLegal || null }).eq('id', user.id);
+            if (user) {
+                await client.from('perfiles').update({ 
+                    bio: bio, 
+                    generos: generosSeleccionados, 
+                    nombre_legal: nombreLegal,
+                    edad: parseInt(edad)
+                }).eq('id', user.id);
+            }
         }, 1500);
 
         mostrarPaso('exito');
@@ -235,10 +271,20 @@
         document.getElementById('step-' + (typeof n === 'number' ? n : 'exito')).classList.add('activo');
         [1,2,3].forEach(i => {
             const dot = document.getElementById('dot-'+i);
-            if(dot) { dot.classList.remove('activo','hecho'); if (typeof n==='number') { if(i<n) dot.classList.add('hecho'); else if(i===n) dot.classList.add('activo'); } }
+            if(dot) { 
+                dot.classList.remove('activo','hecho'); 
+                if (typeof n==='number') { 
+                    if(i<n) dot.classList.add('hecho'); 
+                    else if(i===n) dot.classList.add('activo'); 
+                } 
+            }
         });
     }
-    function mostrarError(el, msg) { el.textContent = msg; el.classList.remove('hidden'); }
+
+    function mostrarError(el, msg) { 
+        el.textContent = msg; 
+        el.classList.remove('hidden'); 
+    }
     </script>
 </body>
 </html>

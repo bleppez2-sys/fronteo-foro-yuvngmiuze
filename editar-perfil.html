@@ -59,38 +59,63 @@
                     <textarea id="perfil-bio" class="input-field resize-none" rows="3" placeholder="Cuéntale al mundo quién eres..." maxlength="160"></textarea>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-bold text-zinc-400 block mb-1">Instagram (URL)</label>
-                        <input type="text" id="link-instagram" class="input-field text-xs" placeholder="https://instagram.com/...">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-zinc-400 block mb-1">Spotify (URL)</label>
-                        <input type="text" id="link-spotify" class="input-field text-xs" placeholder="https://open.spotify.com/...">
+                <!-- PLATAFORMAS PRINCIPALES (NUEVO DISEÑO EN GRILLA) -->
+                <div class="pt-4 border-t border-zinc-800/60 mt-4">
+                    <label class="text-xs font-bold text-zinc-400 block mb-3">🎧 Redes y Plataformas Musicales</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">Instagram</label>
+                            <input type="url" id="link-instagram" class="input-field text-xs" placeholder="URL de Instagram">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">Spotify</label>
+                            <input type="url" id="link-spotify" class="input-field text-xs" placeholder="URL de Spotify">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">Apple Music</label>
+                            <input type="url" id="link-apple" class="input-field text-xs" placeholder="URL de Apple Music">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">YouTube</label>
+                            <input type="url" id="link-youtube" class="input-field text-xs" placeholder="URL de YouTube">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">TikTok</label>
+                            <input type="url" id="link-tiktok" class="input-field text-xs" placeholder="URL de TikTok">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">SoundCloud</label>
+                            <input type="url" id="link-soundcloud" class="input-field text-xs" placeholder="URL de SoundCloud">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">Amazon Music</label>
+                            <input type="url" id="link-amazon" class="input-field text-xs" placeholder="URL de Amazon Music">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-zinc-500 block mb-1">Claro Música</label>
+                            <input type="url" id="link-claro" class="input-field text-xs" placeholder="URL de Claro Música">
+                        </div>
                     </div>
                 </div>
 
-                <div>
+                <div class="pt-4 border-t border-zinc-800/60 mt-4">
                     <label class="text-xs font-bold text-zinc-400 block mb-1">🔴 URL de tu Stream en Vivo</label>
-                    <input type="text" id="link-stream" class="input-field text-xs" placeholder="https://twitch.tv/tu_canal">
+                    <input type="url" id="link-stream" class="input-field text-xs" placeholder="https://twitch.tv/tu_canal">
                     <p class="text-[10px] text-zinc-500 mt-1">Esta es la URL que se mostrará en tu perfil cuando hagas clic en "Conectar" del panel En Vivo.</p>
                 </div>
 
-                <!-- NUEVA SECCIÓN: ENLACES PERSONALIZADOS (LINKTREE INTERNO) -->
+                <!-- ENLACES ADICIONALES (LINKTREE) -->
                 <div class="pt-4 border-t border-zinc-800/60 mt-6">
-                    <label class="text-xs font-bold text-zinc-400 block mb-1">🔗 Enlaces Adicionales (Estilo Linktree)</label>
-                    <p class="text-[10px] text-zinc-500 mb-3">Agrega tu canal de YouTube, tienda de merch, TikTok, etc.</p>
+                    <label class="text-xs font-bold text-zinc-400 block mb-1">🔗 Otros Enlaces (Estilo Linktree)</label>
+                    <p class="text-[10px] text-zinc-500 mb-3">Úsalo para tu página web, tienda de merch, entradas especiales, etc.</p>
                     
-                    <div id="contenedor-links-dinamicos" class="space-y-3 mb-3">
-                        <!-- Aquí aparecerán los inputs dinámicos -->
-                    </div>
+                    <div id="contenedor-links-dinamicos" class="space-y-3 mb-3"></div>
                     
                     <button type="button" onclick="agregarInputLink('', '')" class="text-xs font-bold text-purple-400 hover:text-purple-300 bg-purple-900/20 border border-purple-800/50 px-4 py-2 rounded-lg w-full transition-colors flex items-center justify-center gap-2">
                         <span>+</span> Añadir un nuevo enlace
                     </button>
                 </div>
 
-                <!-- Elemento msg-box posicionado correctamente -->
                 <div id="msg-box" class="hidden text-xs px-3 py-2 rounded-lg mb-4 mt-4"></div>
 
                 <button id="btn-guardar" onclick="guardarTodo()" class="btn-primary w-full mt-2">Guardar cambios del perfil</button>
@@ -112,13 +137,21 @@
             if (!user) { window.location.href = 'login.html'; return; }
             usuarioActual = user;
 
-            // Cargar datos actuales de la BD
             const { data: perfil } = await client.from('perfiles').select('*').eq('id', user.id).single();
             if (perfil) {
                 document.getElementById('perfil-nombre').value = perfil.nombre_display || '';
                 document.getElementById('perfil-bio').value = perfil.bio || '';
+                
+                // Cargar todas las plataformas
                 document.getElementById('link-instagram').value = perfil.link_instagram || '';
                 document.getElementById('link-spotify').value = perfil.link_spotify || '';
+                document.getElementById('link-apple').value = perfil.link_apple || '';
+                document.getElementById('link-youtube').value = perfil.link_youtube || '';
+                document.getElementById('link-tiktok').value = perfil.link_tiktok || '';
+                document.getElementById('link-soundcloud').value = perfil.link_soundcloud || '';
+                document.getElementById('link-amazon').value = perfil.link_amazon || '';
+                document.getElementById('link-claro').value = perfil.link_claro || '';
+                
                 document.getElementById('link-stream').value = perfil.link_stream || '';
                 
                 urlFotoFinal = perfil.avatar_url;
@@ -126,7 +159,6 @@
                     document.getElementById('avatar-preview').innerHTML = `<img src="${urlFotoFinal}" class="w-full h-full object-cover">`;
                 }
 
-                // Cargar links dinámicos si existen
                 if (perfil.links_custom && Array.isArray(perfil.links_custom)) {
                     perfil.links_custom.forEach(link => {
                         agregarInputLink(link.titulo, link.url);
@@ -135,34 +167,27 @@
             }
         }
 
-        // Función para agregar los cajones de Título y URL
         window.agregarInputLink = function(tituloValor = '', urlValor = '') {
             const container = document.getElementById('contenedor-links-dinamicos');
             const div = document.createElement('div');
             div.className = 'flex gap-2 items-start link-item fade-in';
             div.innerHTML = `
                 <div class="flex-1 space-y-2">
-                    <input type="text" placeholder="Título (Ej: Mi Nuevo Videoclip)" value="${tituloValor}" class="input-field text-xs link-titulo">
-                    <input type="url" placeholder="URL (Ej: https://youtube.com/...)" value="${urlValor}" class="input-field text-xs link-url">
+                    <input type="text" placeholder="Título (Ej: Mi Merch)" value="${tituloValor}" class="input-field text-xs link-titulo">
+                    <input type="url" placeholder="URL (Ej: https://...)" value="${urlValor}" class="input-field text-xs link-url">
                 </div>
-                <button type="button" onclick="this.parentElement.remove()" class="bg-red-900/20 text-red-500 hover:text-red-400 border border-red-900/50 p-2.5 rounded-lg transition-colors h-full flex items-center mt-1">
-                    ✕
-                </button>
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-900/20 text-red-500 hover:text-red-400 border border-red-900/50 p-2.5 rounded-lg transition-colors h-full flex items-center mt-1">✕</button>
             `;
             container.appendChild(div);
         }
 
-        // Mostrar la foto en la pantalla apenas el usuario la elija de su galería
         window.previsualizarImagen = function(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-
                 if (file.size > 4 * 1024 * 1024) {
                     alert("¡Archivo demasiado pesado! Elige una imagen más liviana (menor a 4 MB).");
-                    input.value = ''; 
-                    return;
+                    input.value = ''; return;
                 }
-
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('avatar-preview').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
@@ -173,18 +198,14 @@
 
         window.guardarTodo = async function() {
             const btn = document.getElementById('btn-guardar');
-            const msgBox = document.getElementById('msg-box');
             const fileInput = document.getElementById('avatar-file');
             
             const nombre = document.getElementById('perfil-nombre').value.trim();
             const bio = document.getElementById('perfil-bio').value.trim();
-            const insta = document.getElementById('link-instagram').value.trim();
-            const spoty = document.getElementById('link-spotify').value.trim();
             const stream = document.getElementById('link-stream').value.trim();
 
             if (!nombre) return mostrarMensaje("El nombre en pantalla es obligatorio.", false);
 
-            // Capturar links personalizados
             const linkItems = document.querySelectorAll('.link-item');
             const linksPersonalizados = [];
             linkItems.forEach(item => {
@@ -196,33 +217,33 @@
             btn.disabled = true;
             btn.textContent = "Procesando datos...";
 
-            // 1. Subir foto si hay una nueva
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 const fileExt = file.name.split('.').pop();
                 const filePath = `${usuarioActual.id}-${Date.now()}.${fileExt}`;
-
                 const { data: uploadData, error: uploadError } = await client.storage
-                    .from('avatares')
-                    .upload(filePath, file, { cacheControl: '3600', upsert: true });
+                    .from('avatares').upload(filePath, file, { cacheControl: '3600', upsert: true });
 
                 if (uploadError) {
-                    btn.disabled = false;
-                    btn.textContent = "Guardar cambios del perfil";
+                    btn.disabled = false; btn.textContent = "Guardar cambios del perfil";
                     return mostrarMensaje("Error al subir archivo: " + uploadError.message, false);
                 }
-
                 const { data: { publicUrl } } = client.storage.from('avatares').getPublicUrl(filePath);
                 urlFotoFinal = publicUrl;
             }
 
-            // 2. Guardar datos y array de links en Supabase
             const { error: updateError } = await client.from('perfiles').update({
                 nombre_display: nombre,
                 bio: bio,
                 avatar_url: urlFotoFinal,
-                link_instagram: insta,
-                link_spotify: spoty,
+                link_instagram: document.getElementById('link-instagram').value.trim(),
+                link_spotify: document.getElementById('link-spotify').value.trim(),
+                link_apple: document.getElementById('link-apple').value.trim(),
+                link_youtube: document.getElementById('link-youtube').value.trim(),
+                link_tiktok: document.getElementById('link-tiktok').value.trim(),
+                link_soundcloud: document.getElementById('link-soundcloud').value.trim(),
+                link_amazon: document.getElementById('link-amazon').value.trim(),
+                link_claro: document.getElementById('link-claro').value.trim(),
                 link_stream: stream,
                 links_custom: linksPersonalizados
             }).eq('id', usuarioActual.id);
@@ -231,7 +252,7 @@
             btn.textContent = "Guardar cambios del perfil";
 
             if (updateError) {
-                mostrarMensaje("Error al guardar texto: " + updateError.message, false);
+                mostrarMensaje("Error al guardar: " + updateError.message, false);
             } else {
                 mostrarMensaje("¡Perfil actualizado con éxito! Redirigiendo...", true);
                 setTimeout(() => window.location.href = 'profile.html', 2000);

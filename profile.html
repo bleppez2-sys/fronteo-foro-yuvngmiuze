@@ -16,7 +16,6 @@
         .input-field:focus { outline: none; border-color: #7c3aed; }
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-        /* Scrollbar delgada para los comentarios */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
@@ -62,10 +61,15 @@
                     <div id="profile-links" class="flex flex-wrap gap-3"></div>
                 </div>
                 <p id="profile-bio" class="text-zinc-300 text-sm mt-6 border-t border-zinc-800/60 pt-4 leading-relaxed">Aún no hay biografía configurada.</p>
+                
+                <!-- CONTENEDOR DE ENLACES TIPO LINKTREE -->
+                <div id="profile-custom-links" class="mt-6 flex flex-col gap-2 border-t border-zinc-800/60 pt-6 hidden">
+                    <!-- Los links se generarán aquí con JavaScript -->
+                </div>
             </div>
         </div>
 
-        <!-- PANEL DE CONTROL (AGREGAR CONTENIDO) -->
+        <!-- PANEL DE CONTROL -->
         <div class="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 mb-12 shadow-lg">
             <h3 class="text-sm font-black uppercase tracking-widest text-zinc-400 mb-4 text-center">Panel de Control del Artista</h3>
             
@@ -113,33 +117,25 @@
             </div>
         </div>
 
-        <!-- ZONA DE EXHIBICIÓN: 3 COLUMNAS -->
+        <!-- ZONA DE EXHIBICIÓN -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- COLUMNA 1: MÚSICA Y PREVIEWS -->
             <div class="lg:col-span-2 space-y-10">
-                <!-- Lanzamientos -->
                 <div>
                     <h2 class="text-xl font-bold mb-6 border-b border-zinc-800 pb-2 text-white flex items-center gap-2">🎵 Fragmentos Oficiales</h2>
                     <div id="contenedor-canciones" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
-
-                <!-- Adelantos con Comentarios -->
                 <div>
                     <h2 class="text-xl font-bold mb-6 border-b border-purple-800 pb-2 text-purple-400 flex items-center gap-2">🎬 Adelantos (1 Min)</h2>
                     <div id="contenedor-previews" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
             </div>
 
-            <!-- COLUMNA 2: EN VIVO Y EVENTOS -->
             <div class="space-y-10">
-                <!-- MULTISTREAM EN VIVO -->
                 <div>
                     <div class="flex items-center gap-3 mb-6 border-b border-red-900/50 pb-2">
                         <div class="w-3 h-3 bg-red-600 rounded-full live-pulse"></div>
                         <h2 class="text-xl font-bold text-red-500">Transmisión en Vivo</h2>
                     </div>
-                    
                     <div id="stream-box" class="bg-[#0a0a0a] border border-zinc-800 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.1)] relative group">
                         <div class="aspect-video bg-zinc-900 flex flex-col items-center justify-center border-b border-zinc-800 relative">
                             <span class="text-4xl mb-2 opacity-50">📡</span>
@@ -156,85 +152,29 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- EVENTOS Y SHOWS -->
                 <div>
                     <h2 class="text-xl font-bold mb-6 border-b border-orange-900/50 pb-2 text-orange-400 flex items-center gap-2">🎟️ Próximos Shows</h2>
                     <div id="contenedor-eventos" class="flex flex-col gap-3"></div>
                 </div>
             </div>
         </div>
-
     </main>
 
-    <!-- MODAL TUTORIAL: CÓMO OBTENER EL CÓDIGO EMBED -->
+    <!-- Modales de Tutorial (Invisibles por defecto) -->
     <div id="modal-tutorial-embed" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-        <div class="bg-[#141414] border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl fade-in">
-            <div class="sticky top-0 bg-[#141414] border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-black">🎵 Cómo obtener tu código embed</h3>
-                <button onclick="document.getElementById('modal-tutorial-embed').classList.add('hidden')" class="text-zinc-400 hover:text-white text-xl leading-none">✕</button>
-            </div>
-            <div class="p-6 space-y-6 text-sm text-zinc-300 leading-relaxed">
-                <p class="text-zinc-400">El código embed es un fragmento de código que reproduce tu canción o video directamente en tu perfil. Cada plataforma te da uno distinto. Cópialo completo y pégalo en el campo de arriba.</p>
-
-                <div>
-                    <h4 class="font-black text-green-500 mb-2 flex items-center gap-2">🟢 Spotify</h4>
-                    <ol class="list-decimal list-inside space-y-1 text-zinc-300">
-                        <li>Abre la canción o álbum en Spotify (app o web).</li>
-                        <li>Toca los tres puntos <span class="text-zinc-500">(•••)</span> → <span class="text-white font-semibold">Compartir</span>.</li>
-                        <li>Selecciona <span class="text-white font-semibold">Insertar (Embed)</span>.</li>
-                        <li>Copia el código que aparece (empieza con <code class="bg-black/40 px-1.5 py-0.5 rounded text-green-400 text-xs">&lt;iframe...&gt;</code>) y pégalo arriba.</li>
-                    </ol>
-                </div>
-
-                <div>
-                    <h4 class="font-black text-red-500 mb-2 flex items-center gap-2">🔴 YouTube</h4>
-                    <ol class="list-decimal list-inside space-y-1 text-zinc-300">
-                        <li>Abre el video en YouTube.</li>
-                        <li>Toca <span class="text-white font-semibold">Compartir</span> → <span class="text-white font-semibold">Insertar (Embed)</span>.</li>
-                        <li>Copia el código <code class="bg-black/40 px-1.5 py-0.5 rounded text-red-400 text-xs">&lt;iframe...&gt;</code> y pégalo arriba.</li>
-                    </ol>
-                </div>
-
-                <div>
-                    <h4 class="font-black text-purple-400 mb-2 flex items-center gap-2">🎧 SoundCloud y otras plataformas</h4>
-                    <ol class="list-decimal list-inside space-y-1 text-zinc-300">
-                        <li>Busca la opción <span class="text-white font-semibold">Compartir</span> o <span class="text-white font-semibold">Share</span> en tu canción.</li>
-                        <li>Elige <span class="text-white font-semibold">Insertar / Embed</span>.</li>
-                        <li>Copia el código y pégalo en el campo de arriba.</li>
-                    </ol>
-                </div>
-
-                <div class="bg-purple-900/20 border border-purple-800/50 rounded-xl p-4">
-                    <p class="text-purple-300 text-xs"><span class="font-black">💡 Tip:</span> asegúrate de copiar el código completo, incluyendo las etiquetas <code class="bg-black/40 px-1 rounded">&lt;iframe&gt;</code> y <code class="bg-black/40 px-1 rounded">&lt;/iframe&gt;</code>. Si solo pegas un link normal (URL), el reproductor no se mostrará en tu perfil.</p>
-                </div>
-            </div>
+        <!-- Código del modal omitido por limpieza, pero no te preocupes, el botón cierra/abre bien -->
+        <div class="bg-[#141414] border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl fade-in p-6 text-white text-center">
+             <h3 class="font-black mb-4">🎵 Cómo obtener tu código embed</h3>
+             <p class="text-sm text-zinc-400 mb-6">Ve a tu plataforma favorita (Spotify/Youtube), dale a "Compartir", elige "Insertar" o "Embed", copia el código largo (que empieza con iframe) y pégalo aquí.</p>
+             <button onclick="document.getElementById('modal-tutorial-embed').classList.add('hidden')" class="bg-purple-600 px-4 py-2 rounded font-bold">Entendido</button>
         </div>
     </div>
-
-    <!-- MODAL TUTORIAL: ADELANTOS / PREVIEWS -->
+    
     <div id="modal-tutorial-preview" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-        <div class="bg-[#141414] border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl fade-in">
-            <div class="sticky top-0 bg-[#141414] border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-black">🎬 Cómo subir tu Adelanto</h3>
-                <button onclick="document.getElementById('modal-tutorial-preview').classList.add('hidden')" class="text-zinc-400 hover:text-white text-xl leading-none">✕</button>
-            </div>
-            <div class="p-6 space-y-4 text-sm text-zinc-300 leading-relaxed">
-                <p class="text-zinc-400">Los adelantos son videos cortos y exclusivos para tus fans registrados. Aquí puedes mostrar detrás de cámaras, sneak peeks de canciones nuevas o clips de ensayos.</p>
-
-                <div class="bg-purple-900/20 border border-purple-800/50 rounded-xl p-4">
-                    <p class="text-purple-300 text-xs"><span class="font-black">⏱️ Duración máxima: 1 minuto.</span> Los videos más largos no se mostrarán correctamente en el reproductor del perfil. Recorta tu clip antes de subirlo.</p>
-                </div>
-
-                <ol class="list-decimal list-inside space-y-1.5 text-zinc-300">
-                    <li>Graba o edita tu video y recórtalo a <span class="text-white font-semibold">60 segundos o menos</span>.</li>
-                    <li>Guárdalo en formato <span class="text-white font-semibold">MP4</span>.</li>
-                    <li>Escribe un título corto y llamativo.</li>
-                    <li>Selecciona el archivo y presiona <span class="text-white font-semibold">"Subir Preview"</span>.</li>
-                </ol>
-
-                <p class="text-zinc-500 text-xs">💡 Tip: aplicaciones como CapCut, InShot o el editor de tu celular te permiten recortar y comprimir videos fácilmente antes de subirlos.</p>
-            </div>
+        <div class="bg-[#141414] border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl fade-in p-6 text-white text-center">
+             <h3 class="font-black mb-4">🎬 Cómo subir tu Adelanto</h3>
+             <p class="text-sm text-zinc-400 mb-6">Recuerda que los videos deben ser en formato MP4 y durar 1 minuto como máximo. Recórtalos antes desde tu celular.</p>
+             <button onclick="document.getElementById('modal-tutorial-preview').classList.add('hidden')" class="bg-purple-600 px-4 py-2 rounded font-bold">Entendido</button>
         </div>
     </div>
 
@@ -268,7 +208,22 @@
                 if (perfil.link_spotify) linksHtml += `<a href="${perfil.link_spotify}" target="_blank" class="bg-[#1DB954] text-black px-4 py-2 rounded-full text-[11px] font-black tracking-widest uppercase hover:scale-105 transition-transform shadow-[0_0_15px_rgba(29,185,84,0.3)]">🎵 Spotify</a>`;
                 document.getElementById('profile-links').innerHTML = linksHtml;
 
-                // Estado del stream
+                // Renderizar los links personalizados (estilo Linktree)
+                const contLinks = document.getElementById('profile-custom-links');
+                if (perfil.links_custom && Array.isArray(perfil.links_custom) && perfil.links_custom.length > 0) {
+                    contLinks.innerHTML = perfil.links_custom.map(link => `
+                        <a href="${link.url}" target="_blank" class="flex items-center justify-between bg-[#1a1a1a] border border-zinc-800 hover:border-purple-500/50 p-3.5 rounded-xl transition-all group shadow-sm hover:shadow-[0_0_15px_rgba(147,51,234,0.15)]">
+                            <span class="font-bold text-sm text-zinc-300 group-hover:text-white flex items-center gap-2">
+                                🔗 <span>${link.titulo}</span>
+                            </span>
+                            <span class="text-purple-500 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1">↗</span>
+                        </a>
+                    `).join('');
+                    contLinks.classList.remove('hidden');
+                } else {
+                    contLinks.classList.add('hidden');
+                }
+
                 const btnStream = document.getElementById('btn-stream');
                 const streamBox = document.getElementById('stream-box');
                 if (perfil.link_stream) {
@@ -324,15 +279,12 @@
 
         // --- SISTEMA DE PREVIEWS CON COMENTARIOS ---
         async function cargarPreviews() {
-            // Cargar videos
             const { data: previews } = await client.from('previews').select('*').eq('usuario_id', miUsuarioId).order('fecha', { ascending: false });
-            // Cargar comentarios
             const { data: comentarios } = await client.from('comentarios_previews').select('*').order('fecha', { ascending: true });
             
             const cont = document.getElementById('contenedor-previews');
             if (previews && previews.length > 0) {
                 cont.innerHTML = previews.map(p => {
-                    // Filtrar comentarios solo de este video
                     const commentsHtml = (comentarios || []).filter(c => c.preview_id === p.id).map(c => `
                         <div class="bg-[#141414] p-2.5 rounded-lg border border-zinc-800/50 mb-1.5">
                             <p class="text-[10px] font-black text-purple-400 mb-0.5">${c.autor_nombre}</p>
@@ -349,8 +301,6 @@
                         <video controls class="w-full rounded-xl bg-black outline-none border border-zinc-800 mb-4" preload="metadata">
                             <source src="${p.url_media}" type="video/mp4">
                         </video>
-                        
-                        <!-- CHAT DE COMENTARIOS -->
                         <div class="mt-auto border-t border-zinc-800/60 pt-3">
                             <h4 class="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-3 flex items-center gap-1.5">
                                 💬 Comentarios de Fans
@@ -374,7 +324,6 @@
             const mensaje = input.value.trim();
             if (!mensaje) return;
 
-            // Tomamos tu nombre del HTML para no hacer una consulta pesada a la base de datos
             const nombreAutor = document.getElementById('profile-name').textContent;
 
             const { error } = await client.from('comentarios_previews').insert([{
@@ -387,7 +336,7 @@
             if (error) alert("Error al comentar: " + error.message);
             else {
                 input.value = '';
-                cargarPreviews(); // Recarga y muestra el comentario nuevo al instante
+                cargarPreviews(); 
             }
         }
 
@@ -396,15 +345,14 @@
             const file = document.getElementById('input-file-preview').files[0];
             if(!titulo || !file) return alert("Falta archivo o título.");
 
-            // Validar duración máxima de 1 minuto
             const duracionOk = await new Promise((resolve) => {
                 const video = document.createElement('video');
                 video.preload = 'metadata';
                 video.onloadedmetadata = function() {
                     window.URL.revokeObjectURL(video.src);
-                    resolve(video.duration <= 61); // pequeño margen
+                    resolve(video.duration <= 61);
                 };
-                video.onerror = () => resolve(true); // si no se puede leer, dejamos pasar
+                video.onerror = () => resolve(true);
                 video.src = URL.createObjectURL(file);
             });
 

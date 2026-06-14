@@ -84,7 +84,10 @@
             <!-- Panel Fragmento -->
             <div id="panel-fragmento" class="hidden bg-[#141414] p-5 rounded-xl border border-zinc-800 fade-in">
                 <input type="text" id="input-titulo-cancion" placeholder="Título del fragmento" class="input-field mb-3">
-                <input type="text" id="input-embed-cancion" placeholder="Pega aquí el iframe de Spotify" class="input-field mb-4">
+                <input type="text" id="input-embed-cancion" placeholder="Pega aquí el código embed de Spotify, YouTube, etc." class="input-field mb-2">
+                <button onclick="document.getElementById('modal-tutorial-embed').classList.remove('hidden')" class="text-purple-400 hover:text-purple-300 text-xs font-bold mb-4 inline-flex items-center gap-1">
+                    ❓ ¿Cómo consigo el código embed?
+                </button>
                 <button onclick="publicarCancion()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-colors">Publicar Fragmento</button>
             </div>
 
@@ -160,6 +163,51 @@
         </div>
 
     </main>
+
+    <!-- MODAL TUTORIAL: CÓMO OBTENER EL CÓDIGO EMBED -->
+    <div id="modal-tutorial-embed" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div class="bg-[#141414] border border-zinc-800 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto shadow-2xl fade-in">
+            <div class="sticky top-0 bg-[#141414] border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-black">🎵 Cómo obtener tu código embed</h3>
+                <button onclick="document.getElementById('modal-tutorial-embed').classList.add('hidden')" class="text-zinc-400 hover:text-white text-xl leading-none">✕</button>
+            </div>
+            <div class="p-6 space-y-6 text-sm text-zinc-300 leading-relaxed">
+                <p class="text-zinc-400">El código embed es un fragmento de código que reproduce tu canción o video directamente en tu perfil. Cada plataforma te da uno distinto. Cópialo completo y pégalo en el campo de arriba.</p>
+
+                <div>
+                    <h4 class="font-black text-green-500 mb-2 flex items-center gap-2">🟢 Spotify</h4>
+                    <ol class="list-decimal list-inside space-y-1 text-zinc-300">
+                        <li>Abre la canción o álbum en Spotify (app o web).</li>
+                        <li>Toca los tres puntos <span class="text-zinc-500">(•••)</span> → <span class="text-white font-semibold">Compartir</span>.</li>
+                        <li>Selecciona <span class="text-white font-semibold">Insertar (Embed)</span>.</li>
+                        <li>Copia el código que aparece (empieza con <code class="bg-black/40 px-1.5 py-0.5 rounded text-green-400 text-xs">&lt;iframe...&gt;</code>) y pégalo arriba.</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h4 class="font-black text-red-500 mb-2 flex items-center gap-2">🔴 YouTube</h4>
+                    <ol class="list-decimal list-inside space-y-1 text-zinc-300">
+                        <li>Abre el video en YouTube.</li>
+                        <li>Toca <span class="text-white font-semibold">Compartir</span> → <span class="text-white font-semibold">Insertar (Embed)</span>.</li>
+                        <li>Copia el código <code class="bg-black/40 px-1.5 py-0.5 rounded text-red-400 text-xs">&lt;iframe...&gt;</code> y pégalo arriba.</li>
+                    </ol>
+                </div>
+
+                <div>
+                    <h4 class="font-black text-purple-400 mb-2 flex items-center gap-2">🎧 SoundCloud y otras plataformas</h4>
+                    <ol class="list-decimal list-inside space-y-1 text-zinc-300">
+                        <li>Busca la opción <span class="text-white font-semibold">Compartir</span> o <span class="text-white font-semibold">Share</span> en tu canción.</li>
+                        <li>Elige <span class="text-white font-semibold">Insertar / Embed</span>.</li>
+                        <li>Copia el código y pégalo en el campo de arriba.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-purple-900/20 border border-purple-800/50 rounded-xl p-4">
+                    <p class="text-purple-300 text-xs"><span class="font-black">💡 Tip:</span> asegúrate de copiar el código completo, incluyendo las etiquetas <code class="bg-black/40 px-1 rounded">&lt;iframe&gt;</code> y <code class="bg-black/40 px-1 rounded">&lt;/iframe&gt;</code>. Si solo pegas un link normal (URL), el reproductor no se mostrará en tu perfil.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const supabaseUrl = 'https://exekwnxlfhukaojxtlcj.supabase.co';
